@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Discover properties — GharKaAdda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="CSS/gka-price-display.css?v=1" />
+  <link rel="stylesheet" href="CSS/discover-swipe.css?v=1" />
+</head>
+<body class="discover-page">
+  <header class="discover-top">
+    <a href="index.html" class="brand">
+      <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda">
+    </a>
+    <a href="signup.html" class="discover-signin">Sign up</a>
+  </header>
+
+  <div class="discover-stage" id="discoverStage">
+    <p class="discover-empty" id="discoverLoading">Loading properties…</p>
+  </div>
+
+  <div class="discover-actions">
+    <button type="button" class="discover-explore" id="exploreMoreBtn">
+      Explore more — create free account
+    </button>
+    <p class="discover-hint">Swipe left or right to browse listings. No likes required — just explore.</p>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="JS/gka-listing-media.js?v=4"></script>
+  <script src="JS/gka-price-display.js?v=1"></script>
+  <script>
+    const API = window.GKA_CONFIG?.API_BASE_URL || '/api';
+    const stage = document.getElementById('discoverStage');
+    const loading = document.getElementById('discoverLoading');
+    let properties = [];
+    let index = 0;
+
+    document.getElementById('exploreMoreBtn').onclick = () => {
+      location.href = 'signup.html';
+    };
+
+    function heroUrl(p) {
+      if (p.media?.length) return p.media[0].file_url;
+      return 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800';
+    }
+
+    function buildCard(p) {
+      const card = document.createElement('article');
+      card.className = 'discover-card';
+      const priceHtml = window.GKAPriceDisplay
+        ? GKAPriceDisplay.formatPriceHtml(p)
+        : `<span class="gka-price-single">₹${parseFloat(p.monthly_rent || 0).toLocaleString('en-IN')}/mo</span>`;
+      card.innerHTML = `
+        <div class="discover-card-hero" style="background-image:url('${heroUrl(p)}')">
+          <div class="discover-card-price">${priceHtml}</div>
+        </div>
+        <div class="discover-card-body">
+          <h2>${p.title || 'Property'}</h2>
+          <p>${(p.description || '').slice(0, 120)}${(p.description || '').length > 120 ? '…' : ''}</p>
+          <div class="discover-meta">
+            <span><i class="fa-solid fa-map-pin"></i> ${p.city || 'Tricity'}</span>
+            <span><i class="fa-solid fa-graduation-cap"></i> ${p.nearest_college || 'Near campus'}</span>
+            <span>${p.property_type || 'Room'}</span>
+          </div>
+        </div>
+      `;
+      bindSwipe(card);
+      return card;
+    }
+
+    function showCurrent() {
+      stage.innerHTML = '';
+      if (!properties.length) {
+        stage.innerHTML = '<p class="discover-empty">No listings available yet. Check back soon.</p>';
+        return;
+      }
+      if (index >= properties.length) index = 0;
+      const card = buildCard(properties[index]);
+      stage.appendChild(card);
+    }
+
+    function nextCard(direction) {
+      const card = stage.querySelector('.discover-card');
+      if (!card) return;
+      card.classList.add(direction === 'left' ? 'is-exit-left' : 'is-exit-right');
+      setTimeout(() => {
+        index = (index + 1) % properties.length;
+        showCurrent();
+      }, 380);
+    }
+
+    function bindSwipe(card) {
+      let startX = 0;
+      let dragging = false;
+
+      const onStart = (x) => {
+        startX = x;
+        dragging = true;
+      };
+      const onEnd = (x) => {
+        if (!dragging) return;
+        dragging = false;
+        const dx = x - startX;
+        if (Math.abs(dx) > 60) {
+          nextCard(dx < 0 ? 'left' : 'right');
+        }
+      };
+
+      card.addEventListener('pointerdown', (e) => {
+        card.setPointerCapture(e.pointerId);
+        onStart(e.clientX);
+      });
+      card.addEventListener('pointerup', (e) => onEnd(e.clientX));
+      card.addEventListener('pointercancel', () => {
+        dragging = false;
+      });
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`${API}/properties`);
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : data.properties || [];
+        properties = rows.filter((p) => p.status === 'approved');
+        if (loading) loading.remove();
+        showCurrent();
+      } catch (e) {
+        if (loading) loading.textContent = 'Could not load properties. Please try again.';
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

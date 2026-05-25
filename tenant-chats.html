@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Messages — GharKaAdda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="CSS/gka-app.css?v=2" />
+  <link rel="stylesheet" href="CSS/gka-dashboard-nav.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-shell.css?v=2" />
+  <link rel="stylesheet" href="CSS/gka-chat-olx.css?v=2" />
+  <style>
+    body { min-height: 100vh; background: linear-gradient(135deg, var(--bg), #fff8ef); font-family: Inter, sans-serif; color: var(--text); }
+    .top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+    .back-btn { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.6); font-weight: 800; color: var(--accent); display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="gka-noise"></div>
+  <main class="gka-page">
+    <div class="top">
+      <div class="gka-shell-slot" data-auto></div>
+    </div>
+    <nav data-gka-dash-nav></nav>
+    <h1 class="gka-title" style="margin-bottom:8px;">Messages</h1>
+    <p class="gka-sub" style="margin-bottom:12px;">Each property has its own conversation. Open a listing and select <strong>Message seller</strong>, or choose a thread below.</p>
+    <p class="gka-sub" style="margin-bottom:20px;">Need help from GharKaAdda? <a href="support.html" style="color:var(--accent);font-weight:800;">Contact support</a> — messages appear in the super admin dashboard.</p>
+    <div id="tenantOlxInbox"></div>
+  </main>
+  <script src="config.js"></script>
+  <script src="JS/gka-chat.js?v=7"></script>
+  <script src="JS/gka-notifications.js?v=1"></script>
+  <script src="JS/gka-dashboard-nav.js?v=1"></script>
+  <script src="JS/gka-shell.js?v=3"></script>
+  <script>
+    const token = localStorage.getItem('gka_token') || localStorage.getItem('gka_auth_token');
+    const user = JSON.parse(localStorage.getItem('gka_user') || '{}');
+    const API = window.GKA_CONFIG?.API_BASE_URL || '/api';
+    const openPropertyId = new URLSearchParams(location.search).get('property') || new URLSearchParams(location.search).get('open');
+
+    if (!token) {
+      location.href = 'login.html';
+    } else if (window.GKAChat) {
+      GKAChat.mountOlxInbox({
+        containerId: 'tenantOlxInbox',
+        token,
+        currentUserId: user.id,
+        userRole: 'tenant',
+        listUrl: `${API}/conversations`,
+        openPropertyId,
+        listingHref: 'tenant-search-dashboard.html?property=',
+        onError: (m) => alert(m)
+      });
+    }
+  </script>
+</body>
+</html>

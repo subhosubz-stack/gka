@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Platform tour — GharKaAdda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="CSS/gka-product-tour.css?v=1" />
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(135deg, #f7f3ee, #fff8ef);
+      color: #1c1713;
+    }
+    .loading {
+      font-weight: 700;
+      color: #7a4e2d;
+    }
+  </style>
+</head>
+<body>
+  <p class="loading">Loading your platform tour…</p>
+  <script src="config.js"></script>
+  <script src="JS/gka-product-tour.js?v=1"></script>
+  <script src="JS/gka-auth.js?v=2"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem('gka_user') || 'null');
+    const token = localStorage.getItem('gka_token') || localStorage.getItem('gka_auth_token');
+    if (!token || !user?.id) {
+      location.href = 'login.html';
+    } else if (window.GKAProductTour?.isCompleted(user.id)) {
+      location.href = 'role-select.html';
+    } else {
+      document.querySelector('.loading').remove();
+      GKAProductTour.run({
+        userId: user.id,
+        onFinish: () => {
+          location.href = 'role-select.html';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

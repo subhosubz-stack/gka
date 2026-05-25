@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+
+  <title>Sign In — GharKaAdda</title>
+
+  <link rel="stylesheet" href="CSS/login.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+
+<body>
+  <div class="noise"></div>
+  <div class="cursor-glow"></div>
+
+  <div class="auth-3d-world">
+    <div class="auth-ring auth-ring-one"></div>
+    <div class="auth-ring auth-ring-two"></div>
+    <div class="auth-ring auth-ring-three"></div>
+
+    <div class="auth-light-beam beam-one"></div>
+    <div class="auth-light-beam beam-two"></div>
+
+    <div class="auth-glass-shape shape-one"></div>
+    <div class="auth-glass-shape shape-two"></div>
+    <div class="auth-glass-shape shape-three"></div>
+
+    <div class="auth-depth-dot dot-one"></div>
+    <div class="auth-depth-dot dot-two"></div>
+    <div class="auth-depth-dot dot-three"></div>
+  </div>
+
+  <a href="index.html" class="back-home">
+    <i class="fa-solid fa-arrow-left"></i>
+    Back to home
+  </a>
+
+  <main class="auth-page">
+    <section class="auth-left">
+      <div class="auth-brand reveal">
+        <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda Logo">
+        <span>Verified student housing platform</span>
+      </div>
+
+      <h1 class="auth-title reveal">
+        Welcome back to your
+        <em>student housing adda.</em>
+      </h1>
+
+      <p class="auth-text reveal">
+        Sign in to unlock verified listings, roommate matches, property locks,
+        contact access, and tenant tools.
+      </p>
+
+      <div class="feature-pills reveal">
+        <span>Verified Listings</span>
+        <span>30-Day Unlock</span>
+        <span>Roommate Match</span>
+      </div>
+    </section>
+
+    <section class="auth-stage">
+      <div class="floating-orb orb-one"></div>
+      <div class="floating-orb orb-two"></div>
+
+      <div class="panda-scene">
+        <div class="panda" id="loginPanda">
+          <div class="ear"></div>
+
+          <div class="face">
+            <div class="eye-shade"></div>
+            <div class="eye-white">
+              <div class="eye-ball"></div>
+            </div>
+
+            <div class="eye-shade rgt"></div>
+            <div class="eye-white rgt">
+              <div class="eye-ball"></div>
+            </div>
+
+            <div class="nose"></div>
+            <div class="mouth"></div>
+          </div>
+
+          <div class="body-panda"></div>
+
+          <div class="foot">
+            <div class="finger"></div>
+          </div>
+
+          <div class="foot rgt">
+            <div class="finger"></div>
+          </div>
+        </div>
+
+        <form class="auth-card" id="loginForm" autocomplete="on">
+          <div class="hand"></div>
+          <div class="hand rgt"></div>
+
+          <div class="form-head">
+            <h2>Sign In</h2>
+            <p>Access your GharKaAdda account securely.</p>
+          </div>
+
+          <div id="googleSignInBtn" class="google-signin-slot"></div>
+          <div class="divider"><span></span>or continue with email<span></span></div>
+
+          <div class="form-group">
+            <input id="email" type="email" class="form-control" required autocomplete="email">
+            <label class="form-label" for="email">Email address</label>
+          </div>
+
+          <div class="form-group password-group">
+            <input id="password" type="password" class="form-control" required autocomplete="current-password">
+            <label class="form-label" for="password">Password</label>
+
+            <button class="toggle-password" type="button" data-target="password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+
+          <div class="form-meta">
+            <label>
+              <input type="checkbox" id="rememberMe">
+              Remember me
+            </label>
+
+            <a href="#" id="forgotPassword">Forgot password?</a>
+          </div>
+
+          <p class="alert" id="loginAlert"></p>
+
+          <button class="submit-btn" type="submit" id="loginBtn">
+            <span>Login securely</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+
+          <p class="switch-auth">
+            New to GharKaAdda?
+            <a href="signup.html">Create account</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-blur footer-blur-one"></div>
+    <div class="footer-blur footer-blur-two"></div>
+
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda logo">
+          <p>
+            A verified student housing platform helping students discover rooms,
+            unlock contacts, find roommates, and move in with confidence.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-column">
+            <h4>Platform</h4>
+            <a href="index.html#home">Home</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#services">Services</a>
+            <a href="index.html#discover">Discover</a>
+          </div>
+
+          <div class="footer-column">
+            <h4>Services</h4>
+            <a href="index.html#services">Verified Listings</a>
+            <a href="index.html#services">Premium Rentals</a>
+            <a href="index.html#services">Contact Unlock</a>
+            <a href="index.html#services">Roommate Finder</a>
+          </div>
+
+          <div class="footer-column">
+            <h4>Contact</h4>
+            <a href="mailto:hello@gharkaadda.com">hello@gharkaadda.com</a>
+            <a href="https://wa.me/919999999999" target="_blank">WhatsApp Support</a>
+            <a href="signup.html">Create Account</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-social-row">
+        <a href="https://instagram.com/" target="_blank" class="social-link" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+          <span>Instagram</span>
+        </a>
+
+        <a href="https://wa.me/919999999999" target="_blank" class="social-link" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span>WhatsApp</span>
+        </a>
+
+        <a href="mailto:hello@gharkaadda.com" class="social-link" aria-label="Email">
+          <i class="fa-regular fa-envelope"></i>
+          <span>Email</span>
+        </a>
+
+        <a href="tel:+919999999999" class="social-link" aria-label="Call">
+          <i class="fa-solid fa-phone"></i>
+          <span>Call</span>
+        </a>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 GharKaAdda. All rights reserved.</p>
+        <div>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script src="config.js?v=12"></script>
+<script src="JS/gka-auth.js?v=3"></script>
+<script src="JS/login.js?v=12"></script>
+</body>
+</html>

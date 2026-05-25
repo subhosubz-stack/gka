@@ -1,0 +1,35 @@
+.gka-qr-block {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px dashed rgba(122, 78, 45, 0.35);
+  background: rgba(255, 255, 255, 0.55);
+  text-align: center;
+}
+
+.gka-qr-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent, #7a4e2d);
+  margin: 0 0 12px;
+}
+
+.gka-qr-img {
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 8px 28px rgba(63, 39, 24, 0.12);
+}
+
+.gka-qr-hint {
+  font-size: 12px;
+  color: var(--muted, #77695f);
+  margin: 12px 0 8px;
+  line-height: 1.45;
+}
+
+.gka-qr-link {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent, #7a4e2d);
+}

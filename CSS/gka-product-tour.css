@@ -1,0 +1,81 @@
+.gka-tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.gka-tour-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 23, 19, 0.55);
+  pointer-events: auto;
+}
+
+.gka-tour-spotlight {
+  position: absolute;
+  border-radius: 20px;
+  box-shadow: 0 0 0 9999px rgba(28, 23, 19, 0.55);
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
+.gka-tour-card {
+  position: fixed;
+  z-index: 10001;
+  width: min(420px, calc(100% - 32px));
+  padding: 24px;
+  border-radius: 24px;
+  background: #fffaf4;
+  border: 1px solid rgba(122, 78, 45, 0.2);
+  box-shadow: 0 28px 80px rgba(63, 39, 24, 0.22);
+  pointer-events: auto;
+}
+
+.gka-tour-card h3 {
+  font-family: Manrope, sans-serif;
+  font-size: 22px;
+  color: #7a4e2d;
+  margin: 0 0 8px;
+}
+
+.gka-tour-card p {
+  font-size: 14px;
+  color: #77695f;
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+.gka-tour-progress {
+  font-size: 12px;
+  font-weight: 800;
+  color: #7a4e2d;
+  margin-bottom: 12px;
+}
+
+.gka-tour-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gka-tour-btn {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 800;
+  cursor: pointer;
+  font: inherit;
+}
+
+.gka-tour-btn-primary {
+  background: #7a4e2d;
+  color: #fff;
+}
+
+.gka-tour-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(122, 78, 45, 0.25);
+  color: #7a4e2d;
+}

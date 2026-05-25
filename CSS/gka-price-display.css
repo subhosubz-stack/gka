@@ -1,0 +1,58 @@
+.gka-price-deal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.gka-price-deal.is-compact {
+  gap: 0;
+}
+
+.gka-price-actual {
+  font-size: 0.82em;
+  font-weight: 700;
+  color: var(--muted, #77695f);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.gka-price-offer {
+  font-size: 1.15em;
+  font-weight: 900;
+  color: var(--accent, #7a4e2d);
+  line-height: 1.1;
+}
+
+.gka-price-reason {
+  font-size: 0.72em;
+  font-weight: 800;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.14);
+  padding: 3px 8px;
+  border-radius: 999px;
+  max-width: 100%;
+}
+
+.gka-price-single {
+  font-weight: 900;
+  color: var(--accent, #7a4e2d);
+}
+
+.p-price .gka-price-deal,
+.p-price .gka-price-single {
+  color: #fff;
+}
+
+.p-price .gka-price-actual {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.p-price .gka-price-offer {
+  color: #fff;
+}
+
+.p-price .gka-price-reason {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Property listing — GharKaAdda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="CSS/gka-price-display.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-app.css?v=2" />
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Inter, sans-serif;
+      color: #1c1713;
+      background: linear-gradient(160deg, #f7f3ee, #fff8ef);
+    }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 24px 20px 48px; }
+    .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .top img { width: 130px; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(122, 78, 45, 0.12);
+      color: #7a4e2d;
+    }
+    .badge.premium { background: linear-gradient(135deg, #7a4e2d, #3d2516); color: #fff; }
+    .card {
+      border-radius: 24px;
+      border: 1px solid rgba(122, 78, 45, 0.16);
+      background: rgba(255, 255, 255, 0.75);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .hero { border-radius: 20px; overflow: hidden; margin-bottom: 16px; min-height: 200px; }
+    .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px; }
+    .facts div strong { display: block; font-size: 11px; color: #77695f; text-transform: uppercase; }
+    .amenities { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .amenities span {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(122, 78, 45, 0.08);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .cta {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 999px;
+      background: #7a4e2d;
+      color: #fff;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .loading { text-align: center; padding: 80px 20px; color: #7a4e2d; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a href="index.html"><img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda"></a>
+      <a href="signup.html" style="font-weight:800;color:#7a4e2d;font-size:14px;">Sign up</a>
+    </div>
+    <div id="content"><p class="loading">Loading listing…</p></div>
+  </div>
+  <script src="config.js"></script>
+  <script src="JS/gka-listing-media.js?v=4"></script>
+  <script src="JS/gka-price-display.js?v=1"></script>
+  <script>
+    const API = window.GKA_CONFIG?.API_BASE_URL || '/api';
+    const id = new URLSearchParams(location.search).get('id');
+    const el = document.getElementById('content');
+
+    function listedByLabel(p) {
+      if (p.listed_by === 'broker') return 'Listed by broker';
+      if (p.listed_by === 'platform') return 'Platform listing';
+      return 'Listed by owner';
+    }
+
+    function partyName(p) {
+      if (p.listed_by === 'broker') return p.broker_name || 'Verified broker';
+      return p.owner_name || 'Property owner';
+    }
+
+    function parseAmenities(p) {
+      let list = p.amenities;
+      if (typeof list === 'string') {
+        try { list = JSON.parse(list); } catch { list = []; }
+      }
+      return Array.isArray(list) ? list : [];
+    }
+
+    function parseRules(p) {
+      let rules = p.rules;
+      if (typeof rules === 'string') {
+        try { rules = JSON.parse(rules); } catch { rules = {}; }
+      }
+      return rules && typeof rules === 'object' ? rules : {};
+    }
+
+    async function load() {
+      if (!id) {
+        el.innerHTML = '<p class="loading">Invalid listing link.</p>';
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/properties/public/${id}`);
+        const p = await res.json();
+        if (!res.ok) {
+          el.innerHTML = `<p class="loading">${p.error || 'Listing not found.'}</p>`;
+          return;
+        }
+
+        const amenities = parseAmenities(p);
+        const rules = parseRules(p);
+        const isPremium = p.listing_type === 'premium' || p.is_premium;
+        const hero = window.GKAListingMedia
+          ? GKAListingMedia.cardHeroHtml(p, { height: 240 })
+          : '';
+
+        const priceHtml = window.GKAPriceDisplay
+          ? GKAPriceDisplay.formatPriceHtml(p)
+          : `₹${parseFloat(p.monthly_rent || 0).toLocaleString('en-IN')}/mo`;
+
+        const rulesHtml = Object.entries(rules)
+          .filter(([, v]) => v)
+          .map(([k, v]) => `<li><strong>${k.replace(/_/g, ' ')}:</strong> ${v}</li>`)
+          .join('');
+
+        document.title = `${p.title || 'Listing'} — GharKaAdda`;
+
+        el.innerHTML = `
+          <div class="card">
+            <div class="hero">${hero}</div>
+            <h1 style="font-family:Manrope,sans-serif;color:#7a4e2d;margin:0 0 8px;">${p.title || 'Property'}</h1>
+            <p style="color:#77695f;line-height:1.55;margin:0 0 12px;">${p.description || ''}</p>
+            <div class="badge-row">
+              <span class="badge ${isPremium ? 'premium' : ''}">${isPremium ? 'Premium' : 'Standard'}</span>
+              <span class="badge">${listedByLabel(p)}</span>
+              <span class="badge"><i class="fa-solid fa-user"></i> ${partyName(p)}</span>
+              <span class="badge">${p.property_type || 'Room'}</span>
+            </div>
+            <div style="margin:16px 0;font-size:22px;">${priceHtml}</div>
+            ${p.offer_reason ? `<p style="font-size:13px;color:#b45309;font-weight:700;">${p.offer_reason}</p>` : ''}
+          </div>
+          <div class="card">
+            <h2 style="font-size:16px;color:#7a4e2d;margin:0 0 12px;">Details</h2>
+            <div class="facts">
+              <div><strong>City</strong>${p.city || '—'}${p.locality ? ` · ${p.locality}` : ''}</div>
+              <div><strong>College</strong>${p.nearest_college || '—'}</div>
+              <div><strong>Deposit</strong>₹${parseFloat(p.security_deposit || 0).toLocaleString('en-IN')}</div>
+              <div><strong>Beds</strong>${p.available_beds || 1} / ${p.capacity || 1}</div>
+              <div><strong>Gender</strong>${p.gender_preference || 'any'}</div>
+              <div><strong>Available</strong>${p.available_from ? new Date(p.available_from).toLocaleDateString('en-IN') : 'Immediate'}</div>
+            </div>
+          </div>
+          ${amenities.length ? `<div class="card"><h2 style="font-size:16px;color:#7a4e2d;">Amenities</h2><div class="amenities">${amenities.map((a) => `<span>${a}</span>`).join('')}</div></div>` : ''}
+          ${rulesHtml ? `<div class="card"><h2 style="font-size:16px;color:#7a4e2d;">House rules</h2><ul style="color:#77695f;line-height:1.6;padding-left:18px;">${rulesHtml}</ul></div>` : ''}
+          <a class="cta" href="signup.html">Sign up on GharKaAdda to unlock contact</a>
+        `;
+
+        if (window.GKAListingMedia) GKAListingMedia.bindThumbClicks(el);
+      } catch (e) {
+        el.innerHTML = '<p class="loading">Could not load listing. Please try again.</p>';
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

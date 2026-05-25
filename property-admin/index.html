@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../JS/gka-route-guard.js"></script>
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Property Admin — GharKaAdda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="../CSS/gka-admin-panel.css?v=1" />
+</head>
+<body class="gka-admin gka-prop-admin">
+  <div class="adm-layout">
+    <header class="adm-sidebar" style="height:auto;">
+      <h1><i class="fa-solid fa-house-circle-check"></i> Property Admin</h1>
+      <p class="badge">Listings verify · Add property · Profile verify only</p>
+      <p style="font-size:12px;opacity:.9;">Payments, branding, bans — Super Admin only</p>
+      <button type="button" class="adm-btn" id="logoutBtn" style="margin-top:12px;color:#fff;border-color:rgba(255,255,255,.3);">Logout</button>
+    </header>
+
+    <main class="adm-main">
+      <section class="adm-card">
+        <h2><i class="fa-solid fa-clock"></i> Pending listings — verify</h2>
+        <div id="pendingProps"></div>
+      </section>
+
+      <section class="adm-card">
+        <h2><i class="fa-solid fa-user-check"></i> Manual profile verification</h2>
+        <p style="font-size:13px;color:#77695f;margin-bottom:12px;">Owners & brokers awaiting verification</p>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="pendingProfiles"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2><i class="fa-solid fa-pen-to-square"></i> Edit listed properties</h2>
+        <p style="font-size:13px;color:#77695f;margin-bottom:12px;">Update any field on live or pending listings.</p>
+        <div id="allPropsList"></div>
+      </section>
+
+      <section class="adm-card">
+        <h2><i class="fa-solid fa-plus"></i> Add platform property</h2>
+        <form id="addForm" class="adm-form-grid">
+          <input required placeholder="Title *" id="title">
+          <input required placeholder="City *" id="city" value="Mohali">
+          <input placeholder="Locality" id="locality">
+          <select id="college" required>
+            <option value="">Nearest college *</option>
+            <option>CGC UNIVERSITY MOHALI</option>
+            <option>CHANDIGARH UNIVERSITY</option>
+            <option>CGC LANDRAN</option>
+            <option>QUEST GROUP OF COLLEGES</option>
+            <option>CHITKARA UNIVERSITY</option>
+          </select>
+          <input type="number" placeholder="Actual price ₹" id="actualPrice">
+          <input type="number" required placeholder="Offer price ₹ *" id="offerPrice">
+          <input type="text" placeholder="Offer reason" id="offerReason">
+          <input type="number" placeholder="Monthly rent (legacy)" id="rent" hidden>
+          <input type="number" placeholder="Display rank (lower = first)" id="rank">
+          <textarea id="desc" rows="2" placeholder="Description"></textarea>
+          <button type="submit" class="adm-btn primary">Add approved listing</button>
+        </form>
+      </section>
+    </main>
+  </div>
+  <div class="adm-toast" id="admToast"></div>
+  <div id="editModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45);padding:20px;overflow:auto;">
+    <div style="max-width:640px;margin:24px auto;background:#fff;border-radius:20px;padding:24px;">
+      <h3 style="margin:0 0 16px;color:#7a4e2d;">Edit property</h3>
+      <form id="editForm" class="adm-form-grid"></form>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button type="button" class="adm-btn" id="editCancel">Cancel</button>
+        <button type="submit" form="editForm" class="adm-btn primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+  <script src="../config.js"></script>
+  <script src="app.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Landlord Onboarding — GharKaAdda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="CSS/gka-app.css?v=2">
+
+  <style>
+    :root {
+      --bg:#f7f3ee;
+      --paper:#fffaf4;
+      --accent:#7a4e2d;
+      --accent-dark:#3d2516;
+      --text:#1c1713;
+      --muted:#77695f;
+      --line:rgba(122,78,45,.16);
+      --shadow:0 34px 100px rgba(63,39,24,.16);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height:100vh;
+      font-family:Inter,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122,78,45,.16), transparent 30%),
+        radial-gradient(circle at 88% 20%, rgba(122,78,45,.12), transparent 28%),
+        linear-gradient(135deg,var(--bg),#fff8ef);
+    }
+
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; border:0; cursor:pointer; }
+
+    .noise {
+      position:fixed;
+      inset:0;
+      z-index:20;
+      opacity:.12;
+      pointer-events:none;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position:relative;
+      z-index:2;
+      width:min(1180px, calc(100% - 42px));
+      min-height:100vh;
+      margin:0 auto;
+      padding:42px 0;
+      display:grid;
+      align-items:center;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:42px;
+    }
+
+    .brand img {
+      width:150px;
+    }
+
+    .logout {
+      min-height:46px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(20px);
+      color:var(--accent);
+      font-weight:900;
+      transition:.3s;
+    }
+
+    .logout:hover { transform:translateY(-3px); background:rgba(255,255,255,.8); }
+
+    .split {
+      display:grid;
+      grid-template-columns:1fr 1.1fr;
+      gap:48px;
+      align-items:center;
+    }
+
+    .left-intro h1 {
+      font-family:Manrope,sans-serif;
+      font-size:clamp(44px,6.8vw,80px);
+      line-height:.96;
+      letter-spacing:-.06em;
+      font-weight:800;
+    }
+
+    .left-intro h1 em { display:block; color:var(--accent); font-style:normal; }
+
+    .left-intro p {
+      max-width:520px;
+      margin-top:24px;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.75;
+      font-weight:650;
+    }
+
+    .form-card {
+      padding:34px;
+      border:1px solid var(--line);
+      border-radius:38px;
+      background:rgba(255,255,255,.76);
+      backdrop-filter:blur(28px);
+      box-shadow:var(--shadow);
+    }
+
+    .form-card h2 { font-family:Manrope,sans-serif; color:var(--accent); font-size:32px; font-weight:800; margin-bottom:12px; }
+    .form-card p { color:var(--muted); font-size:14px; font-weight:650; margin-bottom:28px; }
+
+    .form-row {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .form-grp {
+      margin-bottom:18px;
+      text-align:left;
+    }
+
+    .form-grp label {
+      display:block;
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .form-grp input, .form-grp select {
+      width:100%;
+      height:48px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(122,78,45,.2);
+      outline:none;
+      font-weight:750;
+      color:var(--text);
+    }
+
+    .form-grp input:focus, .form-grp select:focus {
+      border-color:var(--accent);
+    }
+
+    .media-hint {
+      font-size:12px;
+      color:var(--muted);
+      font-weight:650;
+      margin-top:6px;
+      line-height:1.5;
+    }
+
+    .video-preview {
+      margin-top:12px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      aspect-ratio:16/9;
+      background:#000;
+    }
+
+    .video-preview iframe {
+      width:100%;
+      height:100%;
+      border:0;
+      min-height:200px;
+    }
+
+    .upload-zone {
+      margin-top:8px;
+      padding:22px;
+      border:2px dashed rgba(122,78,45,.28);
+      border-radius:16px;
+      text-align:center;
+      cursor:pointer;
+      transition:.2s;
+      background:rgba(255,255,255,.4);
+    }
+
+    .upload-zone:hover { border-color:var(--accent); background:rgba(122,78,45,.04); }
+
+    .upload-zone i { font-size:28px; color:var(--accent); margin-bottom:8px; }
+
+    .photo-previews {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(88px, 1fr));
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .photo-previews .thumb {
+      position:relative;
+      aspect-ratio:1;
+      border-radius:12px;
+      background-size:cover;
+      background-position:center;
+      border:1px solid var(--line);
+    }
+
+    .photo-previews .thumb button {
+      position:absolute;
+      top:4px;
+      right:4px;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:rgba(0,0,0,.65);
+      color:#fff;
+      font-size:12px;
+      display:grid;
+      place-items:center;
+      padding:0;
+    }
+
+    .submit-btn {
+      width:100%;
+      min-height:56px;
+      margin-top:24px;
+      border-radius:16px;
+      background:var(--accent);
+      color:white;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      box-shadow:0 18px 45px rgba(122,78,45,.24);
+      transition:.25s;
+    }
+
+    .submit-btn:hover {
+      transform:translateY(-2px);
+      box-shadow:0 24px 54px rgba(122,78,45,.3);
+    }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      z-index:900;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(18px);
+      color:var(--accent);
+      font-weight:900;
+      box-shadow:0 18px 60px rgba(63,39,24,.15);
+      transform:translate(-50%, 80px);
+      opacity:0;
+      transition:.35s;
+    }
+
+    .toast.show {
+      transform:translate(-50%,0);
+      opacity:1;
+    }
+
+    @media (max-width:980px) {
+      .split { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <main class="page">
+    <div>
+      <div class="top">
+        <a href="index.html" class="brand">
+          <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda">
+        </a>
+
+        <button class="logout" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Logout
+        </button>
+      </div>
+
+      <div class="split">
+        <div class="left-intro">
+          <h1>Add your property <em>with absolute trust.</em></h1>
+          <p>
+            List your rental adda in seconds. Budget and premium listings both go through verification parameters to ensure zero fake listings.
+          </p>
+        </div>
+
+        <div class="form-card" id="listingWizardHost"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Connecting landlords database...</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="config.js?v=2"></script>
+  <script src="JS/gka-amenities.js?v=1"></script>
+  <script src="JS/gka-listing-media.js?v=4"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="JS/gka-map-picker.js?v=1"></script>
+  <script src="JS/gka-listing-wizard.js?v=2"></script>
+  <script src="JS/gka-payments.js?v=1"></script>
+  <script>
+    const API_BASE_URL = window.GKA_CONFIG?.API_BASE_URL || "/api";
+    const toast = document.getElementById("toast");
+    let currentUser = null;
+    let token = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    async function checkAuth() {
+      token = localStorage.getItem("gka_token") || localStorage.getItem("gka_auth_token");
+      const userStr = localStorage.getItem("gka_user");
+      
+      if (!token || !userStr) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        currentUser = JSON.parse(userStr);
+      } catch (_) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const role = currentUser.role === "broker" ? "broker" : "owner";
+      if (window.GKAListingWizard) {
+        GKAListingWizard.mount({
+          hostId: "listingWizardHost",
+          role,
+          onSubmit: publishListing
+        });
+        bindMediaHandlers();
+      }
+    }
+
+    let pendingPhotoFiles = [];
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotoPreviews() {
+      const box = document.getElementById("photoPreviews");
+      box.innerHTML = "";
+      pendingPhotoFiles.forEach((file, index) => {
+        const url = URL.createObjectURL(file);
+        const div = document.createElement("div");
+        div.className = "thumb";
+        div.style.backgroundImage = `url('${url}')`;
+        div.innerHTML = `<button type="button" data-idx="${index}" aria-label="Remove">&times;</button>`;
+        div.querySelector("button").onclick = () => {
+          pendingPhotoFiles.splice(index, 1);
+          renderPhotoPreviews();
+        };
+        box.appendChild(div);
+      });
+    }
+
+    function bindMediaHandlers() {
+      const zone = document.getElementById("photoUploadZone");
+      const input = document.getElementById("pPhotos");
+      const yt = document.getElementById("pYoutube");
+      if (zone && input) {
+        zone.onclick = () => input.click();
+        input.onchange = (e) => {
+          const picked = Array.from(e.target.files || []);
+          pendingPhotoFiles = pendingPhotoFiles.concat(picked).slice(0, 12);
+          e.target.value = "";
+          renderPhotoPreviews();
+          showToast(`${pendingPhotoFiles.length} photo(s) ready.`);
+        };
+      }
+      if (yt) yt.oninput = updateYoutubePreview;
+    }
+
+    function updateYoutubePreview() {
+      const url = document.getElementById("pYoutube")?.value?.trim() || "";
+      const wrap = document.getElementById("videoPreview");
+      const frame = document.getElementById("youtubePreviewFrame");
+      if (!wrap || !frame) return;
+      const id = window.GKAListingMedia?.parseVideoId(url) || (url ? null : window.GKAListingMedia?.DEFAULT_VIDEO);
+      if (!id) {
+        wrap.hidden = true;
+        return;
+      }
+      frame.src = window.GKAListingMedia.embedUrl(id);
+      wrap.hidden = false;
+    }
+
+    async function publishListing(payload) {
+      if (!payload.title || !payload.city || !(payload.offer_price || payload.monthly_rent)) {
+        showToast("Title, city and offer price are required.");
+        return;
+      }
+
+      showToast("Publishing listing...");
+
+      try {
+        let photo_urls = [];
+        if (pendingPhotoFiles.length > 0) {
+          showToast("Uploading photos...");
+          const filesPayload = await Promise.all(
+            pendingPhotoFiles.map(async (file) => ({ data: await readFileAsDataUrl(file) }))
+          );
+          const upRes = await fetch(`${API_BASE_URL}/properties/upload-images`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ files: filesPayload })
+          });
+          const upData = await upRes.json();
+          if (!upRes.ok) {
+            showToast(upData.error || "Photo upload failed");
+            return;
+          }
+          photo_urls = upData.urls || [];
+        }
+
+        const res = await fetch(`${API_BASE_URL}/properties`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ ...payload, photo_urls })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          if (data.code === "GEO_NOT_SUPPORTED") {
+            showToast(data.error || "This location is outside our service area.");
+            return;
+          }
+          showToast(data.error || "Failed to publish listing");
+          return;
+        }
+
+        if (data.requiresPayment && data.payment?.order) {
+          showToast(`Pay ₹${data.payment.amountInr} listing fee...`);
+          try {
+            await window.GKAPayments.payWithOrder(data.payment, {
+              user: currentUser,
+              onError: (msg) => showToast(msg || "Payment cancelled")
+            });
+            showToast("Payment verified. Listing is live!");
+          } catch (payErr) {
+            showToast(payErr.message || "Complete payment from dashboard.");
+            setTimeout(() => {
+              window.location.href = currentUser.role === "broker" ? "broker-dashboard.html" : "owner-dashboard.html";
+            }, 1200);
+            return;
+          }
+        } else {
+          showToast("Property published!");
+        }
+
+        try {
+          const meRes = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData.user) {
+              localStorage.setItem("gka_user", JSON.stringify(meData.user));
+              currentUser = meData.user;
+            }
+          }
+        } catch (_) {}
+
+        setTimeout(() => {
+          window.location.href = currentUser.role === "broker" ? "broker-dashboard.html" : "owner-dashboard.html";
+        }, 700);
+      } catch (err) {
+        console.error("Create listing error:", err);
+        showToast("Error publishing listing.");
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      if (token) {
+        try {
+          await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+        } catch (_) {}
+      }
+      localStorage.removeItem("gka_token");
+      localStorage.removeItem("gka_auth_token");
+      localStorage.removeItem("gka_user");
+      window.location.href = "login.html";
+    });
+
+    checkAuth();
+  </script>
+</body>
+</html>

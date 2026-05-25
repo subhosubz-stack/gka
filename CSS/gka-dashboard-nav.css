@@ -1,0 +1,45 @@
+.gka-dash-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(122, 78, 45, 0.16);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px);
+}
+
+.gka-dash-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent, #7a4e2d);
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.gka-dash-nav-link:hover {
+  background: rgba(122, 78, 45, 0.08);
+}
+
+.gka-dash-nav-link.is-active {
+  background: var(--accent, #7a4e2d);
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .gka-dash-nav {
+    border-radius: 20px;
+  }
+  .gka-dash-nav-link span {
+    display: none;
+  }
+  .gka-dash-nav-link {
+    padding: 10px 12px;
+  }
+}

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Active Resident Stay — GharKaAdda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    :root {
+      --bg:#f7f3ee;
+      --paper:#fffaf4;
+      --accent:#7a4e2d;
+      --accent-dark:#3d2516;
+      --text:#1c1713;
+      --muted:#77695f;
+      --line:rgba(122,78,45,.16);
+      --shadow:0 34px 100px rgba(63,39,24,.16);
+      --success:#17803d;
+      --danger:#d93025;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height:100vh;
+      font-family:Inter,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122,78,45,.16), transparent 30%),
+        radial-gradient(circle at 88% 20%, rgba(122,78,45,.12), transparent 28%),
+        linear-gradient(135deg,var(--bg),#fff8ef);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; border:0; cursor:pointer; }
+
+    .noise {
+      position:fixed;
+      inset:0;
+      z-index:20;
+      opacity:.12;
+      pointer-events:none;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position:relative;
+      z-index:2;
+      width:min(1180px, calc(100% - 42px));
+      min-height:100vh;
+      margin:0 auto;
+      padding:42px 0;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:42px;
+    }
+
+    .brand img {
+      width:150px;
+    }
+
+    .back-btn {
+      min-height:46px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(20px);
+      color:var(--accent);
+      font-weight:900;
+      transition:.3s;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .back-btn:hover { transform:translateY(-3px); background:rgba(255,255,255,.8); }
+
+    .grid-stay {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:34px;
+    }
+
+    .box-item {
+      padding:34px;
+      border:1px solid var(--line);
+      border-radius:34px;
+      background:rgba(255,255,255,.68);
+      backdrop-filter:blur(24px);
+      box-shadow:var(--shadow);
+    }
+
+    .box-item h2 { font-family:Manrope,sans-serif; color:var(--accent); font-size:30px; letter-spacing:-.05em; font-weight:800; margin-bottom:18px; }
+
+    .p-detail { margin-top:14px; position:relative; padding-bottom:14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; font-weight:700; font-size:15px; }
+    .p-detail span.label { color:var(--muted); }
+
+    .btn-action {
+      width:100%;
+      min-height:50px;
+      margin-top:24px;
+      border-radius:16px;
+      background:var(--accent);
+      color:white;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition:.2s;
+    }
+
+    .btn-action:hover { transform:translateY(-2px); box-shadow:0 12px 34px rgba(122,78,45,.2); }
+    .btn-action.release-btn { border:1px solid rgba(217,48,37,.25); background:rgba(217,48,37,.08); color:var(--danger); }
+    .btn-action.release-btn:hover { background:rgba(217,48,37,.14); box-shadow:none; }
+
+    .ticket-list {
+      margin-top:24px;
+      max-height:280px;
+      overflow:auto;
+      display:grid;
+      gap:10px;
+    }
+
+    .ticket-item {
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.5);
+      font-size:13.5px;
+      font-weight:650;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .ticket-badge {
+      padding:4px 10px;
+      border-radius:99px;
+      font-size:11.5px;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+
+    .ticket-badge.open { background:rgba(217,48,37,.08); color:var(--danger); }
+    .ticket-badge.closed { background:rgba(23,128,61,.08); color:var(--success); }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      z-index:900;
+      display:none;
+      place-items:center;
+      background:rgba(61,37,22,.48);
+      backdrop-filter:blur(20px);
+    }
+
+    .modal.show { display:grid; }
+
+    .modal-card {
+      width:min(450px, calc(100% - 30px));
+      background:white;
+      border-radius:28px;
+      padding:28px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+
+    .modal-card h3 { font-family:Manrope,sans-serif; font-size:24px; font-weight:800; text-align:center; margin-bottom:18px; }
+
+    .modal-inputs {
+      display:grid;
+      gap:14px;
+      text-align:left;
+    }
+
+    .modal-inputs label {
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .modal-inputs input, .modal-inputs select, .modal-inputs textarea {
+      width:100%;
+      height:46px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(122,78,45,.2);
+      outline:none;
+      font-weight:750;
+      font-size:14px;
+      color:var(--text);
+    }
+
+    .modal-inputs textarea { height:90px; padding:12px; resize:none; }
+
+    .modal-btns {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:24px;
+    }
+
+    .modal-btn {
+      height:48px;
+      border-radius:14px;
+      font-weight:950;
+      font-size:13.5px;
+    }
+
+    .modal-btn.primary { background:var(--accent); color:white; }
+    .modal-btn.secondary { border:1px solid var(--line); background:#fff; color:var(--text); }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      z-index:990;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(18px);
+      color:var(--accent);
+      font-weight:900;
+      box-shadow:0 18px 60px rgba(63,39,24,.15);
+      transform:translate(-50%, 80px);
+      opacity:0;
+      transition:.35s;
+    }
+
+    .toast.show {
+      transform:translate(-50%,0);
+      opacity:1;
+    }
+
+    .id-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .id-chip {
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.55);
+      font-size:12px;
+      font-weight:750;
+    }
+
+    .id-chip code {
+      font-family:ui-monospace,Consolas,monospace;
+      color:var(--accent);
+      font-weight:900;
+    }
+
+    .member-list {
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+    }
+
+    .member-row {
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.5);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .member-row .tag {
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--success);
+    }
+
+    .btn-secondary {
+      background:transparent;
+      border:1px solid var(--line);
+      color:var(--accent);
+    }
+
+    .seat-hint {
+      font-size:13px;
+      color:var(--muted);
+      font-weight:650;
+      margin-top:8px;
+      line-height:1.55;
+    }
+
+    @media (max-width:900px) {
+      .grid-stay { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <main class="page">
+    <div class="top">
+      <a href="index.html" class="brand">
+        <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda">
+      </a>
+
+      <div class="gka-shell-slot" data-auto></div>
+    </div>
+
+    <nav data-gka-dash-nav></nav>
+
+    <div class="grid-stay" id="residentContainer">
+      <!-- Checked & Rendered Dynamically from Database -->
+    </div>
+  </main>
+
+  <!-- Pay Rent Modal -->
+  <div class="modal" id="payRentModal">
+    <div class="modal-card">
+      <h3>Submit Rent payment</h3>
+      <div class="modal-inputs">
+        <div>
+          <label>Amount to pay (₹)</label>
+          <input type="number" id="payAmount" readonly>
+        </div>
+        <div>
+          <label>Transaction/UPI reference ID</label>
+          <input type="text" id="payReference" placeholder="Enter reference number">
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn secondary" id="closePayModal">Cancel</button>
+        <button class="modal-btn primary" id="confirmPayBtn">Confirm payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Ticket Modal -->
+  <div class="modal" id="ticketModal">
+    <div class="modal-card">
+      <h3>File Maintenance issue</h3>
+      <div class="modal-inputs">
+        <div>
+          <label>Issue classification</label>
+          <select id="ticketCategory">
+            <option value="plumbing">Plumbing / Water supply</option>
+            <option value="electrical">Electrical / Fan / Geyser</option>
+            <option value="security">Security / Door lock</option>
+            <option value="cleanliness">Cleaning / Sweeping</option>
+          </select>
+        </div>
+        <div>
+          <label>Describe the severity</label>
+          <textarea id="ticketDesc" placeholder="Details of the fault..."></textarea>
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn secondary" id="closeTicketModal">Cancel</button>
+        <button class="modal-btn primary" id="confirmTicketBtn">Spawn ticket</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add member modal -->
+  <div class="modal" id="addMemberModal">
+    <div class="modal-card">
+      <h3>Add stay member</h3>
+      <p style="font-size:13px;color:var(--muted);font-weight:650;text-align:center;margin-bottom:14px;line-height:1.55;">
+        Ask them to sign up first, then enter their <strong>Tenant ID</strong> (e.g. TNT-XXXXXXXX).
+      </p>
+      <div class="modal-inputs">
+        <div>
+          <label>Member Tenant ID</label>
+          <input type="text" id="memberTenantIdInput" placeholder="TNT-XXXXXXXX" autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-btn secondary" id="closeAddMemberModal">Cancel</button>
+        <button class="modal-btn primary" id="confirmAddMemberBtn">Add member</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Reading active locks...</div>
+
+  <link rel="stylesheet" href="CSS/gka-dashboard-nav.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-shell.css?v=2" />
+  <script src="config.js?v=2"></script>
+  <script src="JS/gka-profile-badge.js?v=1"></script>
+  <script src="JS/gka-notifications.js?v=1"></script>
+  <script src="JS/gka-dashboard-nav.js?v=1"></script>
+  <script src="JS/gka-shell.js?v=3"></script>
+  <script src="JS/gka-chat.js?v=7"></script>
+  <script src="JS/gka-payments.js?v=2"></script>
+  <script>
+    const API_BASE_URL = window.GKA_CONFIG?.API_BASE_URL || "/api";
+    const toast = document.getElementById("toast");
+    let currentUser = null;
+    let token = null;
+    let activeLock = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    async function checkAuth() {
+      token = localStorage.getItem("gka_token") || localStorage.getItem("gka_auth_token");
+      const userStr = localStorage.getItem("gka_user");
+      
+      if (!token || !userStr) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        currentUser = JSON.parse(userStr);
+      } catch (_) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      fetchStayOverview();
+    }
+
+    let stayOverview = null;
+
+    async function fetchStayOverview() {
+      showToast("Loading your stay status...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/stay-overview`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          renderNoStay();
+          return;
+        }
+
+        stayOverview = await res.json();
+
+        if (stayOverview.linkStatus === "active" && stayOverview.booking) {
+          activeLock = stayOverview.booking;
+          renderActiveStay();
+          fetchTickets();
+          return;
+        }
+
+        if (stayOverview.linkStatus === "pending_payment" && stayOverview.booking) {
+          renderPendingPayment();
+          return;
+        }
+
+        if (stayOverview.linkStatus === "pending") {
+          renderPendingStay();
+          return;
+        }
+
+        renderNoStay();
+      } catch (err) {
+        console.error("Stay overview error:", err);
+        renderNoStay();
+      }
+    }
+
+    function renderNoStay() {
+      document.getElementById("residentContainer").innerHTML = `
+        <div class="box-item" style="grid-column: span 2; text-align: center; padding: 56px 20px;">
+          <h2 style="font-size: 34px;">No Property Linked Yet</h2>
+          <p style="color: var(--muted); font-size: 16px; font-weight: 650; margin-top: 10px; max-width: 560px; margin-left: auto; margin-right: auto; line-height: 1.65;">
+            Browse listings and send a <strong>lock request</strong>. After the owner accepts, pay deposit + first month here to complete binding.
+            Then add roommates by Tenant ID up to the property seat limit.
+          </p>
+          <a href="tenant-search-dashboard.html" class="btn-action" style="max-width: 280px; margin: 24px auto 0;">Browse Properties</a>
+        </div>
+      `;
+    }
+
+    function idChipsHtml() {
+      const tid = stayOverview?.tenant_display_id || currentUser?.display_id || "";
+      const oid = stayOverview?.owner_display_id || stayOverview?.booking?.owner_display_id || "";
+      return `
+        <div class="id-row">
+          ${tid ? `<div class="id-chip">Your Tenant ID: <code>${tid}</code></div>` : ""}
+          ${oid ? `<div class="id-chip">Owner ID: <code>${oid}</code></div>` : ""}
+        </div>
+      `;
+    }
+
+    function renderPendingStay() {
+      const lock = stayOverview.pendingLockRequest;
+      const book = stayOverview.booking;
+      const title = lock?.property_title || book?.title || "Property";
+      const owner = lock?.owner_name || book?.owner_name || "Landlord";
+      const city = lock?.city || book?.city || "";
+
+      document.getElementById("residentContainer").innerHTML = `
+        <div class="box-item" style="grid-column: span 2;">
+          <h2><i class="fa-solid fa-hourglass-half"></i> Awaiting Owner Approval</h2>
+          ${idChipsHtml()}
+          <p style="color:var(--muted);font-weight:650;font-size:14px;line-height:1.6;margin-bottom:18px;">
+            Your lock request is with the owner. After they accept, return here to pay deposit + first month and complete binding.
+          </p>
+          <div class="p-detail"><span class="label">Property</span><span>${title}</span></div>
+          <div class="p-detail"><span class="label">City</span><span>${city || "—"}</span></div>
+          <div class="p-detail"><span class="label">Owner</span><span>${owner}</span></div>
+          <div class="p-detail"><span class="label">Status</span><span style="color:#7a4e2d;font-weight:900;">Pending approval</span></div>
+          ${lock?.note ? `<div class="p-detail"><span class="label">Your note</span><span>${lock.note}</span></div>` : ""}
+          <button type="button" class="btn-action btn-secondary" style="max-width:320px;margin-top:16px;" onclick="fetchStayOverview()">
+            <i class="fa-solid fa-rotate"></i> Refresh Status
+          </button>
+        </div>
+      `;
+    }
+
+    function renderPendingPayment() {
+      const book = stayOverview.booking;
+      const due = parseFloat(book.amount_due || 0);
+      const rent = parseFloat(book.monthly_rent || 0);
+      const deposit = parseFloat(book.security_deposit || 0);
+      const seats = book.capacity || 1;
+
+      document.getElementById("residentContainer").innerHTML = `
+        <div class="box-item" style="grid-column: span 2;">
+          <h2><i class="fa-solid fa-credit-card"></i> Complete Stay Binding</h2>
+          ${idChipsHtml()}
+          <p style="color:var(--muted);font-weight:650;font-size:14px;line-height:1.6;margin-bottom:18px;">
+            Owner accepted your request for <strong>${book.title || "this property"}</strong>.
+            Pay security deposit + first month rent to link your Tenant ID with the Owner ID. Chat and member invites unlock after payment.
+          </p>
+          <div class="p-detail"><span class="label">Property</span><span>${book.title || "—"}</span></div>
+          <div class="p-detail"><span class="label">City</span><span>${book.city || "—"}</span></div>
+          <div class="p-detail"><span class="label">Owner</span><span>${book.owner_name || "—"}</span></div>
+          <div class="p-detail"><span class="label">First month rent</span><span>₹${rent.toLocaleString()}</span></div>
+          <div class="p-detail"><span class="label">Security deposit</span><span>₹${deposit.toLocaleString()}</span></div>
+          <div class="p-detail"><span class="label">Total due now</span><span style="font-weight:900;color:var(--accent);">₹${due.toLocaleString()}</span></div>
+          <div class="p-detail"><span class="label">Seat limit</span><span>${seats} members (including you)</span></div>
+          <button type="button" class="btn-action" id="payBindingBtn" style="max-width:360px;margin-top:20px;">
+            <i class="fa-solid fa-lock-open"></i> Pay &amp; Complete Binding
+          </button>
+          <p class="seat-hint">After payment you become the primary tenant and can add others by their Tenant ID (max ${seats} total).</p>
+          <button type="button" class="btn-action btn-secondary" style="max-width:320px;margin-top:10px;" onclick="fetchStayOverview()">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+      `;
+
+      document.getElementById("payBindingBtn").onclick = payStayBinding;
+    }
+
+    async function payStayBinding() {
+      const book = stayOverview?.booking;
+      if (!book?.id) return;
+      const amount = parseFloat(book.amount_due || 0);
+      if (!amount) {
+        showToast("Invalid binding amount.");
+        return;
+      }
+      showToast("Opening payment for stay binding...");
+      try {
+        await window.GKAPayments.pay({
+          purpose: "stay_binding",
+          booking_id: book.id,
+          property_id: book.property_id,
+          amount,
+          user: currentUser,
+          onSuccess: () => {
+            showToast("Binding complete! You are now linked to the owner.");
+            fetchStayOverview();
+          },
+          onError: (msg) => showToast(msg || "Payment cancelled")
+        });
+      } catch (err) {
+        showToast(err.message || "Payment failed.");
+      }
+    }
+
+    function renderMembersList(members) {
+      if (!members?.length) {
+        return `<p class="seat-hint">No additional members yet.</p>`;
+      }
+      return `<div class="member-list">${members
+        .map((m) => {
+          const label = m.is_primary ? '<span class="tag">Primary</span>' : '';
+          const removeBtn = m.is_primary
+            ? ''
+            : `<button type="button" class="btn-action btn-secondary" style="min-height:36px;padding:0 12px;margin:0;width:auto;" data-remove-member="${m.id}">Remove</button>`;
+          return `
+            <div class="member-row">
+              <div>
+                <strong>${m.full_name || 'Tenant'}</strong>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:4px;">
+                  <code>${m.display_id || ''}</code> ${label}
+                </div>
+              </div>
+              ${removeBtn}
+            </div>`;
+        })
+        .join('')}</div>`;
+    }
+
+    function renderActiveStay() {
+      const rent = parseFloat(activeLock.monthly_rent || 0);
+      const members = activeLock.members || [];
+      const cap = activeLock.seat_capacity || activeLock.capacity || 1;
+      const used = activeLock.seats_used ?? members.length;
+      const slotsLeft = Math.max(0, cap - used);
+      stayOverview = stayOverview || {};
+      stayOverview.tenant_display_id = stayOverview.tenant_display_id || currentUser?.display_id;
+      stayOverview.owner_display_id = stayOverview.owner_display_id || activeLock.owner_display_id;
+
+      document.getElementById("residentContainer").innerHTML = `
+        <div class="box-item">
+          <h2><i class="fa-solid fa-link"></i> Linked to Landlord</h2>
+          ${idChipsHtml()}
+          <p style="color:var(--muted);font-size:13px;font-weight:650;margin:-4px 0 14px;">
+            Binding complete — you and <strong>${activeLock.owner_name || "the owner"}</strong> are linked for this property.
+          </p>
+          <div class="p-detail"><span class="label">Property</span><span>${activeLock.title || "My Room"}</span></div>
+          <div class="p-detail"><span class="label">City</span><span>${activeLock.city || "—"}</span></div>
+          <div class="p-detail"><span class="label">Rent</span><span>₹${rent.toLocaleString()}/mo</span></div>
+          <div class="p-detail"><span class="label">Landlord</span><span>${activeLock.owner_name || "—"}</span></div>
+          <div class="p-detail"><span class="label">Phone</span><span>${activeLock.owner_phone || "N/A"}</span></div>
+
+          <button class="btn-action" onclick="openPayModal(${rent})">
+            <i class="fa-solid fa-credit-card"></i> Pay Monthly Rent
+          </button>
+          <button class="btn-action release-btn" onclick="releaseActiveLock()">
+            <i class="fa-solid fa-door-open"></i> End Stay / Release Lock
+          </button>
+        </div>
+
+        <div class="box-item">
+          <h2><i class="fa-solid fa-users"></i> Stay Members</h2>
+          <p class="seat-hint">
+            Seats: <strong>${used} / ${cap}</strong> (including you).
+            ${slotsLeft > 0 ? `You can add ${slotsLeft} more by Tenant ID.` : 'Seat limit reached.'}
+          </p>
+          ${renderMembersList(members)}
+          <button type="button" class="btn-action" id="openAddMemberBtn" style="margin-top:16px;" ${slotsLeft < 1 ? 'disabled style="opacity:.55;cursor:not-allowed;"' : ''}>
+            <i class="fa-solid fa-user-plus"></i> Add Member (Tenant ID)
+          </button>
+        </div>
+
+        <div class="box-item">
+          <h2>Resident Support</h2>
+          <button class="btn-action" onclick="openTicketModal()">
+            <i class="fa-solid fa-circle-exclamation"></i> Raise Maintenance Ticket
+          </button>
+          <div class="ticket-list" id="ticketsBody">
+            <p style="color:var(--muted);font-weight:600;font-size:14px;text-align:center;padding:24px 0;">No active maintenance tickets raised.</p>
+          </div>
+        </div>
+
+        <div class="box-item" style="grid-column: span 2;">
+          <div id="residentChatHost"></div>
+        </div>
+      `;
+
+      const addBtn = document.getElementById("openAddMemberBtn");
+      if (addBtn && slotsLeft > 0) {
+        addBtn.onclick = () => document.getElementById("addMemberModal").classList.add("show");
+      }
+
+      document.querySelectorAll("[data-remove-member]").forEach((btn) => {
+        btn.onclick = () => removeStayMember(btn.getAttribute("data-remove-member"));
+      });
+
+      if (window.GKAChat && activeLock.property_id) {
+        GKAChat.mountInline({
+          containerId: 'residentChatHost',
+          token,
+          propertyId: activeLock.property_id,
+          currentUserId: currentUser.id,
+          onError: (msg) => showToast(msg)
+        });
+      }
+    }
+
+    async function removeStayMember(memberRowId) {
+      if (!confirm("Remove this member from your stay?")) return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/stay-members/${memberRowId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || "Could not remove member.");
+          return;
+        }
+        showToast("Member removed.");
+        fetchStayOverview();
+      } catch (err) {
+        showToast("Error removing member.");
+      }
+    }
+
+    async function fetchTickets() {
+      if (!activeLock) return;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/maintenance-requests`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) return;
+        const tickets = await res.json();
+
+        if (tickets && tickets.length > 0) {
+          const body = document.getElementById("ticketsBody");
+          body.innerHTML = "";
+
+          tickets.forEach((t) => {
+            const status = t.status || "open";
+            const row = document.createElement("div");
+            row.className = "ticket-item";
+            row.innerHTML = `
+              <div>
+                <strong>${t.title?.toUpperCase() || 'SUPPORT'}</strong>
+                <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">${t.description}</div>
+              </div>
+              <span class="ticket-badge ${status}">${status}</span>
+            `;
+            body.appendChild(row);
+          });
+        }
+      } catch (err) {
+        console.error("Fetch support tickets error:", err);
+      }
+    }
+
+    // Modal Triggers
+    window.openPayModal = (amount) => {
+      document.getElementById("payAmount").value = amount;
+      document.getElementById("payRentModal").classList.add("show");
+    };
+
+    window.openTicketModal = () => {
+      document.getElementById("ticketModal").classList.add("show");
+    };
+
+    document.getElementById("closePayModal").onclick = () => document.getElementById("payRentModal").classList.remove("show");
+    document.getElementById("closeTicketModal").onclick = () => document.getElementById("ticketModal").classList.remove("show");
+    document.getElementById("closeAddMemberModal").onclick = () => document.getElementById("addMemberModal").classList.remove("show");
+
+    document.getElementById("confirmAddMemberBtn").onclick = async () => {
+      const memberId = document.getElementById("memberTenantIdInput").value.trim();
+      if (!memberId) {
+        showToast("Enter the member Tenant ID.");
+        return;
+      }
+      document.getElementById("addMemberModal").classList.remove("show");
+      showToast("Adding member...");
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/stay-members`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ member_tenant_id: memberId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || "Could not add member.");
+          return;
+        }
+        document.getElementById("memberTenantIdInput").value = "";
+        showToast("Member added successfully.");
+        fetchStayOverview();
+      } catch (err) {
+        showToast("Error adding member.");
+      }
+    };
+
+    document.getElementById("confirmPayBtn").onclick = async () => {
+      document.getElementById("payRentModal").classList.remove("show");
+      const amount = parseInt(document.getElementById("payAmount").value, 10);
+      if (!amount || !activeLock?.property_id) {
+        showToast("Invalid rent payment details.");
+        return;
+      }
+
+      showToast("Opening Razorpay checkout...");
+      try {
+        await window.GKAPayments.pay({
+          purpose: "rent",
+          property_id: activeLock.property_id,
+          amount,
+          user: currentUser,
+          onSuccess: () => showToast("Rent payment verified. Owner will confirm receipt."),
+          onError: (msg) => showToast(msg || "Payment cancelled")
+        });
+      } catch (err) {
+        console.error("Rent payment error:", err);
+        showToast(err.message || "Error processing rent payment.");
+      }
+    };
+
+    document.getElementById("confirmTicketBtn").onclick = async () => {
+      const cat = document.getElementById("ticketCategory").value;
+      const desc = document.getElementById("ticketDesc").value.trim();
+
+      if (!desc) {
+        showToast("Please write a detailed description of the issue.");
+        return;
+      }
+
+      document.getElementById("ticketModal").classList.remove("show");
+      showToast("Spawning maintenance ticket...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/maintenance-requests`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            property_id: activeLock.property_id,
+            category: cat,
+            description: desc
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || "Failed to submit ticket.");
+          return;
+        }
+
+        showToast("Maintenance ticket logged.");
+        document.getElementById("ticketDesc").value = "";
+        fetchTickets();
+      } catch (err) {
+        console.error("Submit support ticket error:", err);
+        showToast("Error raising maintenance request.");
+      }
+    };
+
+    window.releaseActiveLock = async () => {
+      if (!confirm("Are you sure you want to release the property lock? This ends your tenant stay.")) return;
+
+      showToast("Releasing property lock...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/bookings/${activeLock.id}/release`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          showToast(data.error || "Failed to release stay booking.");
+          return;
+        }
+
+        showToast("Lock released perfectly.");
+        activeLock = null;
+        fetchStayOverview();
+      } catch (err) {
+        console.error("Release lock stay error:", err);
+        showToast("Error Ending Stay.");
+      }
+    };
+
+    checkAuth();
+  </script>
+</body>
+</html>

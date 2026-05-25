@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>GharKaAdda</title>
+
+  <link rel="stylesheet" href="CSS/index.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+
+<body>
+  <div class="noise"></div>
+  <div class="cursor-glow"></div>
+
+<div class="preloader">
+  <div class="loader-bg-grid"></div>
+
+  <div class="loader-orbit-scene">
+    <div class="loader-orbit orbit-loader-one"></div>
+    <div class="loader-orbit orbit-loader-two"></div>
+    <div class="loader-orbit orbit-loader-three"></div>
+
+    <div class="loader-house">
+      <div class="house-roof"></div>
+      <div class="house-body">
+        <span></span>
+      </div>
+    </div>
+
+    <div class="loader-chip loader-chip-one">Verified</div>
+    <div class="loader-chip loader-chip-two">Premium</div>
+    <div class="loader-chip loader-chip-three">Roommate</div>
+  </div>
+
+  <div class="loader-content">
+    <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda logo">
+
+    <h2>Preparing your adda</h2>
+    <p>Verifying listings · Matching rooms · Unlocking comfort</p>
+
+    <div class="loader-progress-wrap">
+      <div class="loader-line"><span></span></div>
+      <strong class="loader-percent">0%</strong>
+    </div>
+  </div>
+</div>
+
+  <header class="navbar">
+    <a href="#home" class="brand">
+      <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda logo">
+    </a>
+
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="discover.html">Discover</a>
+    </nav>
+
+    <a href="login.html" class="signin-btn">
+      Sign In
+      <span></span>
+    </a>
+
+    <button class="menu-btn" aria-label="Open menu">
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <canvas id="particleCanvas"></canvas>
+
+      <div class="hero-grid"></div>
+
+      <div class="hero-content">
+
+        <h1 class="hero-title reveal-hero">
+          Your student
+          <em>home search</em>
+          finally feels premium.
+        </h1>
+
+        <p class="hero-text reveal-hero">
+          GharKaAdda helps students discover verified rooms, unlock contacts,
+          request property locks, find compatible roommates, and manage housing
+          in one clean digital experience.
+        </p>
+
+        <div class="hero-actions reveal-hero">
+          <a href="login.html" class="primary-btn">
+            Start Discovering
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-stage">
+        <div class="stage-ring ring-one"></div>
+        <div class="stage-ring ring-two"></div>
+        <div class="stage-ring ring-three"></div>
+
+        <div class="orb orb-main"></div>
+        <div class="orb orb-small-a"></div>
+        <div class="orb orb-small-b"></div>
+
+        <div class="floating-panel panel-a" data-depth="1.2">
+          <span>Verified</span>
+          <h3>Owners first. Trust always.</h3>
+          <p>Every owner and property goes through verification before listing.</p>
+        </div>
+
+        <div class="floating-panel panel-b" data-depth="1.7">
+          <span>Premium</span>
+          <h3>No-brokerage homes</h3>
+          <p>Higher visibility listings for better student rental decisions.</p>
+        </div>
+
+        <div class="floating-panel panel-c" data-depth="1.4">
+          <span>Unlock</span>
+          <h3>30-day contact access</h3>
+          <p>Contacts are revealed only after unlock and auto-lock after expiry.</p>
+        </div>
+      </div>
+
+      <div class="scroll-pill">
+        <span></span>
+        Scroll
+      </div>
+    </section>
+
+    <section class="marquee-section">
+      <div class="marquee-track">
+        <span>Verified Listings</span>
+        <span>Premium Rentals</span>
+        <span>Roommate Finder</span>
+        <span>Contact Unlock</span>
+        <span>Tenant Tools</span>
+        <span>Property Lock</span>
+        <span>Verified Listings</span>
+        <span>Premium Rentals</span>
+        <span>Roommate Finder</span>
+        <span>Contact Unlock</span>
+      </div>
+    </section>
+
+    <section class="about section-padding" id="about">
+      <div class="section-head">
+        <p class="section-kicker reveal-up">About the platform</p>
+        <h2 class="section-title reveal-up">
+          A rental marketplace built around trust, clarity, and student convenience.
+        </h2>
+      </div>
+
+      <div class="about-layout">
+        <div class="about-copy reveal-up">
+          <p>
+            GharKaAdda brings owners, verified brokers, and tenants into a structured platform.
+            The experience is designed to reduce confusion, filter unreliable listings, and make
+            student housing faster to discover.
+          </p>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card reveal-card">
+            <strong data-count="3">0</strong>
+            <span>User roles</span>
+          </div>
+          <div class="metric-card reveal-card">
+            <strong data-count="30">0</strong>
+            <span>Days unlock</span>
+          </div>
+          <div class="metric-card reveal-card">
+            <strong data-count="4">0</strong>
+            <span>Core flows</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cinematic-scroll" id="services">
+      <div class="cinema-sticky">
+        <div class="cinema-copy">
+          <p class="section-kicker">Services</p>
+          <h2>One platform. Multiple housing journeys.</h2>
+          <p>
+            From discovering rooms to locking properties and finding roommates,
+            every interaction is crafted as a smooth guided flow.
+          </p>
+        </div>
+
+        <div class="cinema-viewport">
+          <div class="cinema-card card-one">
+            <span>01</span>
+            <h3>Verified Listings</h3>
+            <p>Only approved owners, properties, and selected brokers appear inside the system.</p>
+          </div>
+
+          <div class="cinema-card card-two">
+            <span>02</span>
+            <h3>Standard & Premium</h3>
+            <p>Students can discover budget listings and higher-visibility premium homes.</p>
+          </div>
+
+          <div class="cinema-card card-three">
+            <span>03</span>
+            <h3>Contact Unlock</h3>
+            <p>Paid unlocks reveal contact details for a fixed 30-day access window.</p>
+          </div>
+
+          <div class="cinema-card card-four">
+            <span>04</span>
+            <h3>Roommate Finder</h3>
+            <p>Questionnaire-based matching shows compatibility before students connect.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="discover section-padding" id="discover">
+      <div class="section-head">
+        <p class="section-kicker reveal-up">Discover</p>
+        <h2 class="section-title reveal-up">
+          Designed like a premium product, not a boring rental portal.
+        </h2>
+      </div>
+
+      <div class="discover-grid">
+        <article class="discover-card reveal-card">
+          <div class="discover-icon">V</div>
+          <h3>Verification-first flow</h3>
+          <p>Verified badges are granted only after approval, keeping listings controlled and trusted.</p>
+        </article>
+
+        <article class="discover-card reveal-card">
+          <div class="discover-icon">P</div>
+          <h3>Premium placement</h3>
+          <p>Premium and boosted listings create better visibility for high-intent property owners.</p>
+        </article>
+
+        <article class="discover-card reveal-card">
+          <div class="discover-icon">L</div>
+          <h3>Property lock request</h3>
+          <p>Tenants can request to lock a property while owners accept or reject the request.</p>
+        </article>
+
+        <article class="discover-card reveal-card">
+          <div class="discover-icon">R</div>
+          <h3>Roommate matching</h3>
+          <p>Compatibility percentage helps students choose roommates with similar habits.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="roommate-section section-padding">
+      <div class="roommate-shell">
+        <div class="roommate-copy">
+          <p class="section-kicker reveal-up">Roommate intelligence</p>
+          <h2 class="reveal-up">Find a flatmate who actually matches your lifestyle.</h2>
+          <p class="reveal-up">
+            Students answer lifestyle-based questions and discover nearby matches with a compatibility score.
+          </p>
+        </div>
+
+        <div class="match-orbit reveal-card">
+          <div class="orbit-line orbit-a"></div>
+          <div class="orbit-line orbit-b"></div>
+
+          <div class="match-core">
+            <strong>92%</strong>
+            <span>Match</span>
+          </div>
+
+          <div class="avatar avatar-one"></div>
+          <div class="avatar avatar-two"></div>
+          <div class="avatar avatar-three"></div>
+          <div class="avatar avatar-four"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-section section-padding" id="signin">
+      <div class="final-card">
+        <p class="section-kicker reveal-up">GharKaAdda</p>
+        <h2 class="reveal-up">Built for students who need homes, not headaches.</h2>
+        <p class="reveal-up">
+          A polished, verified, and role-based housing platform for owners, brokers, tenants, and admins.
+        </p>
+
+        <a href="login.html" class="primary-btn reveal-up">
+          Sign In Now
+          <span>→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+  <div class="footer-blur footer-blur-one"></div>
+  <div class="footer-blur footer-blur-two"></div>
+
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda logo">
+        <p>
+          A verified student housing platform helping students discover rooms,
+          unlock contacts, find roommates, and move in with confidence.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-column">
+          <h4>Platform</h4>
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="discover.html">Discover</a>
+        </div>
+
+        <div class="footer-column">
+          <h4>Services</h4>
+          <a href="#services">Verified Listings</a>
+          <a href="#services">Premium Rentals</a>
+          <a href="#services">Contact Unlock</a>
+          <a href="#services">Roommate Finder</a>
+        </div>
+
+        <div class="footer-column">
+          <h4>Contact</h4>
+          <a href="mailto:hello@gharkaadda.com">hello@gharkaadda.com</a>
+          <a href="https://wa.me/919999999999" target="_blank">WhatsApp Support</a>
+          <a href="login.html">Sign In</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-social-row">
+      <a href="https://instagram.com/" target="_blank" class="social-link" aria-label="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+        <span>Instagram</span>
+      </a>
+
+      <a href="https://wa.me/919999999999" target="_blank" class="social-link" aria-label="WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>WhatsApp</span>
+      </a>
+
+      <a href="mailto:hello@gharkaadda.com" class="social-link" aria-label="Email">
+        <i class="fa-regular fa-envelope"></i>
+        <span>Email</span>
+      </a>
+
+      <a href="tel:+919999999999" class="social-link" aria-label="Call">
+        <i class="fa-solid fa-phone"></i>
+        <span>Call</span>
+      </a>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 GharKaAdda. All rights reserved.</p>
+      <div>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <script src="config.js"></script>
+  <script src="JS/gka-branding.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="JS/index.js"></script>
+</body>
+</html>

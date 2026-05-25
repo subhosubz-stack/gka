@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../JS/gka-route-guard.js"></script>
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Super Admin — GharKaAdda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="../CSS/gka-admin-panel.css?v=1" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="gka-admin">
+  <div class="adm-layout">
+    <aside class="adm-sidebar">
+      <h1><i class="fa-solid fa-shield-halved"></i> Super Admin</h1>
+      <p class="badge">Full platform control</p>
+      <nav class="adm-nav">
+        <button type="button" class="active" data-panel="panelOverview" data-load="loadOverview"><i class="fa-solid fa-chart-line"></i> Growth & charts</button>
+        <button type="button" data-panel="panelUsers" data-load="loadUsers"><i class="fa-solid fa-users"></i> Users & bans</button>
+        <button type="button" data-panel="panelProps" data-load="loadProperties"><i class="fa-solid fa-building"></i> All properties</button>
+        <button type="button" data-panel="panelWish" data-load="loadWishlists"><i class="fa-solid fa-heart"></i> Wishlists</button>
+        <button type="button" data-panel="panelPay" data-load="loadPayments"><i class="fa-solid fa-indian-rupee-sign"></i> Payments</button>
+        <button type="button" data-panel="panelBrand" data-load="loadBranding"><i class="fa-solid fa-palette"></i> Logo & branding</button>
+        <button type="button" data-panel="panelSettings"><i class="fa-solid fa-sliders"></i> Pricing settings</button>
+        <button type="button" data-panel="panelBroadcast"><i class="fa-solid fa-bullhorn"></i> Broadcast</button>
+        <button type="button" data-panel="panelChats" data-load="loadChats"><i class="fa-solid fa-comments"></i> Chats</button>
+        <button type="button" data-panel="panelSupport" data-load="loadSupport"><i class="fa-solid fa-headset"></i> Support inbox</button>
+      </nav>
+      <button type="button" class="adm-btn" id="logoutBtn" style="margin-top:auto;color:#fff;border-color:rgba(255,255,255,.3);"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </aside>
+
+    <main class="adm-main">
+      <section id="panelOverview" class="adm-panel active">
+        <h2 style="font-family:Manrope,sans-serif;color:var(--adm-accent);margin:0 0 20px;">Business growth</h2>
+        <div class="adm-kpi-grid" id="kpiGrid"></div>
+        <div class="adm-charts">
+          <div class="adm-chart-card"><h3>New users (30 days)</h3><canvas id="chartSignups" height="200"></canvas></div>
+          <div class="adm-chart-card"><h3>Users by role</h3><canvas id="chartRoles" height="200"></canvas></div>
+          <div class="adm-chart-card"><h3>Listings by status</h3><canvas id="chartProps" height="200"></canvas></div>
+          <div class="adm-chart-card"><h3>Revenue (paid, 30 days)</h3><canvas id="chartRevenue" height="200"></canvas></div>
+        </div>
+        <div class="adm-card">
+          <h2>Top wishlisted properties</h2>
+          <div id="topWishlistProps"></div>
+        </div>
+      </section>
+
+      <section id="panelUsers" class="adm-panel">
+        <div class="adm-card">
+          <h2>All users — ban / unban</h2>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>User</th><th>Role</th><th>Wish / Pay / Msg</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="usersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelProps" class="adm-panel">
+        <div class="adm-card">
+          <h2>All properties</h2>
+          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+            <select id="propFilter">
+              <option value="">All statuses</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+              <option value="archived">Banned / archived</option>
+            </select>
+            <input type="search" id="propSearch" placeholder="Search title or city" style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid rgba(122,78,45,.2);">
+          </div>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Property</th><th>Owner</th><th>Status</th><th>Rent</th><th>Actions</th></tr></thead>
+              <tbody id="propsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelWish" class="adm-panel">
+        <div class="adm-card">
+          <h2>Wishlist analytics</h2>
+          <p style="font-size:13px;color:#77695f;margin-bottom:12px;">Full trail of which students saved which properties</p>
+          <div id="wishTop" style="margin-bottom:16px;"></div>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Student</th><th>Property</th><th>When</th></tr></thead>
+              <tbody id="wishTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelPay" class="adm-panel">
+        <div class="adm-card">
+          <h2>Payments — approve / reject</h2>
+          <select id="payFilter" style="margin-bottom:14px;padding:10px;border-radius:12px;">
+            <option value="">All</option>
+            <option value="created">Created</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>User</th><th>Property</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="paymentsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelBrand" class="adm-panel">
+        <div class="adm-card">
+          <h2>Logo & branding (no code change)</h2>
+          <p style="font-size:13px;color:#77695f;">Paste image URLs — site logo & favicon update automatically</p>
+          <div class="adm-form-grid" style="margin-top:16px;">
+            <label>Logo URL <input id="brandLogo" placeholder="https://..."></label>
+            <img id="brandPreview" alt="Preview" style="max-width:180px;border-radius:12px;">
+            <label>Favicon URL <input id="brandFavicon"></label>
+            <label>Site name <input id="brandSite"></label>
+            <label>Tagline <input id="brandTagline"></label>
+            <label>Support email <input id="brandEmail"></label>
+            <label>WhatsApp number <input id="brandWa" placeholder="91..."></label>
+            <label>Hero image URL (optional) <input id="brandHero"></label>
+            <button type="button" class="adm-btn primary" id="saveBrand">Save branding</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelSettings" class="adm-panel">
+        <div class="adm-card">
+          <h2>Platform pricing (₹)</h2>
+          <div class="adm-form-grid">
+            <label>Contact unlock (standard) <input id="set_contact_unlock_standard_inr"></label>
+            <label>Contact unlock (premium) <input id="set_contact_unlock_premium_inr"></label>
+            <label>Unlock days <input id="set_contact_unlock_days"></label>
+            <label>Visibility boost <input id="set_visibility_boost_inr"></label>
+            <button type="button" class="adm-btn primary" id="savePlatform">Save pricing</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelBroadcast" class="adm-panel">
+        <div class="adm-card">
+          <h2>Broadcast notification</h2>
+          <div class="adm-form-grid">
+            <input id="bTitle" placeholder="Title">
+            <textarea id="bBody" rows="4" placeholder="Message"></textarea>
+            <label><input type="checkbox" class="roleTick" value="tenant"> Students</label>
+            <label><input type="checkbox" class="roleTick" value="owner"> Owners</label>
+            <label><input type="checkbox" class="roleTick" value="broker"> Brokers</label>
+            <button type="button" class="adm-btn primary" id="sendBroadcast">Send broadcast</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="panelChats" class="adm-panel">
+        <div class="adm-card" style="display:grid;grid-template-columns:280px 1fr;gap:20px;">
+          <div><h2>Conversations</h2><div id="chatList"></div></div>
+          <div><h2>Messages</h2><div id="chatMsgs" style="font-size:13px;max-height:400px;overflow:auto;"></div></div>
+        </div>
+      </section>
+
+      <section id="panelSupport" class="adm-panel">
+        <div class="adm-card">
+          <h2>Support messages</h2>
+          <p style="font-size:13px;color:#77695f;margin-bottom:12px;">Messages from tenants, owners, and brokers</p>
+          <div id="supportInbox"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="adm-toast" id="admToast"></div>
+  <script src="../config.js"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

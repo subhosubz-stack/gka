@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Owner Dashboard — GharKaAdda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    :root {
+      --bg:#f7f3ee;
+      --paper:#fffaf4;
+      --accent:#7a4e2d;
+      --accent-dark:#3d2516;
+      --text:#1c1713;
+      --muted:#77695f;
+      --line:rgba(122,78,45,.16);
+      --shadow:0 34px 100px rgba(63,39,24,.16);
+      --success:#17803d;
+      --danger:#d93025;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height:100vh;
+      font-family:Inter,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122,78,45,.16), transparent 30%),
+        radial-gradient(circle at 88% 20%, rgba(122,78,45,.12), transparent 28%),
+        linear-gradient(135deg,var(--bg),#fff8ef);
+    }
+
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; border:0; cursor:pointer; }
+
+    .noise {
+      position:fixed;
+      inset:0;
+      z-index:20;
+      opacity:.12;
+      pointer-events:none;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position:relative;
+      z-index:2;
+      width:min(1180px, calc(100% - 42px));
+      min-height:100vh;
+      margin:0 auto;
+      padding:42px 0;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:42px;
+    }
+
+    .brand img {
+      width:150px;
+    }
+
+    .top-right {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .top-btn {
+      min-height:46px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(20px);
+      color:var(--accent);
+      font-weight:900;
+      transition:.3s;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .top-btn:hover { transform:translateY(-3px); background:rgba(255,255,255,.8); }
+
+    .grid-dashboard {
+      display:grid;
+      grid-template-columns:1.1fr 0.9fr;
+      gap:34px;
+    }
+
+    .stream-block {
+      padding:34px;
+      border:1px solid var(--line);
+      border-radius:34px;
+      background:rgba(255,255,255,.68);
+      backdrop-filter:blur(24px);
+      box-shadow:var(--shadow);
+      margin-bottom:34px;
+    }
+
+    .stream-block h2 { font-family:Manrope,sans-serif; color:var(--accent); font-size:30px; font-weight:800; margin-bottom:18px; }
+
+    .listings-row {
+      display:grid;
+      gap:14px;
+    }
+
+    .list-card {
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:rgba(255,255,255,.5);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .list-card img {
+      width:70px;
+      height:50px;
+      border-radius:10px;
+      object-fit:cover;
+      background:#eee;
+    }
+
+    .list-info { flex-grow:1; text-align:left; }
+    .list-info h4 { font-family:Manrope,sans-serif; font-size:16px; font-weight:800; }
+    .list-info p { color:var(--muted); font-size:12.5px; margin-top:3px; }
+
+    .badge-status {
+      padding:6px 12px;
+      border-radius:99px;
+      font-size:11.5px;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+
+    .badge-status.vacant { background:rgba(23,128,61,.08); color:var(--success); }
+    .badge-status.locked { background:rgba(122,78,45,.08); color:var(--accent); }
+
+    .req-card {
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.5);
+      text-align:left;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .req-user { display:flex; align-items:center; gap:12px; }
+    .req-user i { font-size:20px; color:var(--accent); }
+    .req-user div h5 { font-family:Manrope,sans-serif; font-size:15px; font-weight:800; }
+    .req-user div span { color:var(--muted); font-size:11.5px; }
+
+    .req-meta { font-size:13px; color:var(--muted); font-weight:750; border-top:1px solid var(--line); padding-top:10px; }
+
+    .req-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .req-btns button {
+      height:40px;
+      border-radius:10px;
+      font-weight:900;
+      font-size:12.5px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      transition:.2s;
+    }
+
+    .approve-btn { background:var(--accent); color:white; }
+    .approve-btn:hover { transform:translateY(-2px); }
+
+    .reject-btn { border:1px solid rgba(217,48,37,.18); background:rgba(217,48,37,.06); color:var(--danger); }
+    .reject-btn:hover { background:rgba(217,48,37,.1); }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      z-index:900;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(18px);
+      color:var(--accent);
+      font-weight:900;
+      box-shadow:0 18px 60px rgba(63,39,24,.15);
+      transform:translate(-50%, 80px);
+      opacity:0;
+      transition:.35s;
+    }
+
+    .toast.show {
+      transform:translate(-50%,0);
+      opacity:1;
+    }
+
+    @media (max-width:900px) {
+      .grid-dashboard { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <main class="page">
+    <div class="top">
+      <a href="index.html" class="brand">
+        <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda">
+      </a>
+
+      <div class="top-right">
+        <div class="gka-shell-slot" data-auto></div>
+        <a href="owner-onboarding.html" class="top-btn">
+          <i class="fa-solid fa-plus"></i> List Property
+        </a>
+
+        <button class="top-btn" id="logoutBtn">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <nav data-gka-dash-nav></nav>
+
+    <div class="grid-dashboard">
+      <div>
+        <!-- Listings Component -->
+        <div class="stream-block">
+          <h2>Your Published Properties</h2>
+          <div class="listings-row" id="listingsContainer">
+            <p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">Loading publications...</p>
+          </div>
+        </div>
+
+        <!-- Rent Payments Component -->
+        <div class="stream-block">
+          <h2>Incoming Rent settlements</h2>
+          <div class="listings-row" id="paymentsContainer">
+            <p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">No pending rent deposits submitted yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Lock Requests Component -->
+        <div class="stream-block">
+          <h2>Pending lock requests</h2>
+          <div id="locksContainer">
+            <p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">No lock requests received yet.</p>
+          </div>
+        </div>
+
+        <div class="stream-block">
+          <h2>Active students</h2>
+          <div id="tenantsContainer">
+            <p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">No active residents yet.</p>
+          </div>
+          <button class="top-btn" style="width:100%;margin-top:14px;justify-content:center;" id="rentReminderBtn">
+            <i class="fa-solid fa-bell"></i> Send rent reminder to all
+          </button>
+        </div>
+
+        <div class="stream-block" style="grid-column:1/-1;">
+          <h2>Messages <span style="font-size:12px;font-weight:700;color:var(--muted);">— one thread per listing</span></h2>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Platform help: <a href="support.html" style="color:var(--accent);font-weight:800;">Contact support</a></p>
+          <div id="ownerChatInbox"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Connecting secure streams...</div>
+
+  <div id="studentModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.45);padding:24px;overflow:auto;">
+    <div style="max-width:640px;margin:40px auto;background:var(--paper);border-radius:24px;padding:28px;border:1px solid var(--line);">
+      <button type="button" id="closeStudentModal" class="top-btn" style="margin-bottom:16px;"><i class="fa-solid fa-xmark"></i> Close</button>
+      <div id="studentModalBody"></div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="CSS/gka-dashboard-nav.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-price-display.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-shell.css?v=1" />
+  <script src="config.js?v=2"></script>
+  <script src="JS/gka-profile-badge.js?v=1"></script>
+  <script src="JS/gka-notifications.js?v=1"></script>
+  <script src="JS/gka-price-display.js?v=1"></script>
+  <script src="JS/gka-dashboard-nav.js?v=1"></script>
+  <script src="JS/gka-shell.js?v=3"></script>
+  <script src="JS/gka-listing-media.js?v=4"></script>
+  <link rel="stylesheet" href="CSS/gka-chat-olx.css?v=2" />
+  <script src="JS/gka-chat.js?v=7"></script>
+  <script>
+    const API_BASE_URL = window.GKA_CONFIG?.API_BASE_URL || "/api";
+    const toast = document.getElementById("toast");
+    let currentUser = null;
+    let token = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    async function checkAuth() {
+      token = localStorage.getItem("gka_token") || localStorage.getItem("gka_auth_token");
+      const userStr = localStorage.getItem("gka_user");
+      
+      if (!token || !userStr) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        currentUser = JSON.parse(userStr);
+      } catch (_) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      fetchData();
+    }
+
+    async function openPropertyStudents(propertyId) {
+      const modal = document.getElementById("studentModal");
+      const body = document.getElementById("studentModalBody");
+      modal.style.display = "block";
+      body.innerHTML = "<p>Loading...</p>";
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/properties/${propertyId}/students`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        const p = data.property;
+        let html = `<h3 style="font-family:Manrope,sans-serif;margin-bottom:8px;">${p.title}</h3>
+          <p style="color:var(--muted);margin-bottom:16px;">${p.nearest_college || ""} · ${p.city || ""}</p>`;
+        if (!data.students?.length) {
+          html += "<p>No active students on this listing yet.</p>";
+        } else {
+          data.students.forEach((s) => {
+            html += `<div style="border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;">
+              <strong>${s.student_name}</strong><br>
+              <span style="font-size:13px;color:var(--muted);">${s.student_email} · ${s.student_phone || ""}</span><br>
+              <span style="font-size:12px;">Status: ${s.status}</span>
+              <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+                ${s.aadhar_front_url ? `<a href="${s.aadhar_front_url}" target="_blank">Aadhaar front</a>` : "<span style='color:var(--muted);'>Aadhaar front pending</span>"}
+                ${s.aadhar_back_url ? `<a href="${s.aadhar_back_url}" target="_blank">Aadhaar back</a>` : "<span style='color:var(--muted);'>Aadhaar back pending</span>"}
+              </div>
+            </div>`;
+          });
+        }
+        body.innerHTML = html;
+      } catch (e) {
+        body.innerHTML = `<p>${e.message}</p>`;
+      }
+    }
+
+    document.getElementById("closeStudentModal").onclick = () => {
+      document.getElementById("studentModal").style.display = "none";
+    };
+
+    async function fetchData() {
+      fetchMyProperties();
+      fetchLockRequests();
+      fetchPayments();
+      fetchTenants();
+      loadOwnerChats();
+      if (location.hash === '#ownerChatInbox') {
+        document.getElementById('ownerChatInbox')?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    async function fetchTenants() {
+      const target = document.getElementById("tenantsContainer");
+      if (!target) return;
+      target.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/tenants`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:650;text-align:center;">Failed to load tenants.</p>`;
+          return;
+        }
+        const tenants = await res.json();
+        if (!tenants.length) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:24px 0;">Approve a lock request to add residents.</p>`;
+          return;
+        }
+        tenants.forEach((t) => {
+          const card = document.createElement("div");
+          card.className = "req-card";
+          card.innerHTML = `
+            <div class="req-user">
+              <i class="fa-solid fa-user-check"></i>
+              <div>
+                <h5>${t.tenant_name || "Resident"}</h5>
+                <span>${t.tenant_email || ""} · ${t.property_title || ""}</span>
+              </div>
+            </div>
+            <div class="req-meta">Status: <strong>${t.status}</strong> · Rent ₹${parseFloat(t.monthly_rent || 0).toLocaleString()}/mo</div>
+          `;
+          target.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Fetch tenants error:", err);
+      }
+    }
+
+    async function loadOwnerChats() {
+      const host = document.getElementById("ownerChatInbox");
+      if (!host || !window.GKAChat) return;
+      await GKAChat.mountOlxInbox({
+        containerId: "ownerChatInbox",
+        token,
+        currentUserId: currentUser?.id,
+        userRole: "owner",
+        listUrl: `${API_BASE_URL}/owner/conversations`,
+        listingHref: "owner-dashboard.html#listings",
+        onError: (msg) => showToast(msg)
+      });
+    }
+
+    document.getElementById("rentReminderBtn")?.addEventListener("click", async () => {
+      showToast("Sending rent reminders...");
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/tenants/notify`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            type: "rent_reminder",
+            message: "Friendly reminder: monthly rent is due. Please pay via Resident Dashboard or your agreed UPI method."
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || "Could not send reminders");
+          return;
+        }
+        showToast(`Rent reminder sent to ${data.notified_count} tenant(s).`);
+      } catch (err) {
+        showToast("Network error sending reminders.");
+      }
+    });
+
+    async function fetchMyProperties() {
+      const target = document.getElementById("listingsContainer");
+      target.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/properties`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">Failed to load publications.</p>`;
+          return;
+        }
+
+        const props = await res.json();
+
+        if (!props || props.length === 0) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">You haven't listed any accommodation rooms yet.</p>`;
+          return;
+        }
+
+        props.forEach((p) => {
+          const status = p.availability_status || "vacant";
+          const thumbHtml = window.GKAListingMedia
+            ? `<div style="width:120px;min-width:120px;height:80px;border-radius:12px;overflow:hidden;">${GKAListingMedia.cardHeroHtml(p, { height: 80 })}</div>`
+            : `<img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=300" style="width:120px;height:80px;object-fit:cover;border-radius:12px;">`;
+
+          const card = document.createElement("div");
+          card.className = "list-card";
+          card.style.cursor = "pointer";
+          card.innerHTML = `
+            ${thumbHtml}
+            <div class="list-info">
+              <h4>${p.title}</h4>
+              <p>${p.nearest_college || 'College TBA'} · ${
+                window.GKAPriceDisplay
+                  ? GKAPriceDisplay.formatPriceHtml(p, { compact: true })
+                  : `₹${parseFloat(p.monthly_rent || 0)?.toLocaleString()}/mo`
+              }</p>
+              <p style="font-size:12px;color:var(--muted);margin-top:4px;">Tap for student &amp; Aadhaar details</p>
+            </div>
+            <span class="badge-status ${status}">${status}</span>
+          `;
+          card.onclick = () => openPropertyStudents(p.id);
+          target.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Load owner properties error:", err);
+        target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">Network error occurred.</p>`;
+      }
+    }
+
+    async function fetchLockRequests() {
+      const target = document.getElementById("locksContainer");
+      target.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/lock-requests`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:650;text-align:center;">Failed to fetch lock requests.</p>`;
+          return;
+        }
+
+        const locks = await res.json();
+        const pendingLocks = (locks || []).filter(l => l.status === "pending");
+
+        if (pendingLocks.length === 0) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">No active lock requests found.</p>`;
+          return;
+        }
+
+        pendingLocks.forEach((lnk) => {
+          const card = document.createElement("div");
+          card.className = "req-card";
+          card.innerHTML = `
+            <div class="req-user">
+              <i class="fa-solid fa-user-graduate"></i>
+              <div>
+                <h5>${lnk.tenant_name || 'Student'}</h5>
+                <span>${lnk.tenant_email || 'N/A'} · ${lnk.tenant_phone || 'N/A'}</span>
+              </div>
+            </div>
+            <div class="req-meta">
+              Requested property: <strong>${lnk.property_title}</strong><br>
+              Note: <strong>${lnk.note || "—"}</strong>
+            </div>
+            <div class="req-btns">
+              <button class="approve-btn" onclick="actOnLock('${lnk.id}', 'accepted')">Accept lock</button>
+              <button class="reject-btn" onclick="actOnLock('${lnk.id}', 'rejected')">Reject</button>
+            </div>
+          `;
+          target.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Fetch locks request error:", err);
+        target.innerHTML = `<p style="color:var(--muted);font-weight:650;text-align:center;">Network error.</p>`;
+      }
+    }
+
+    async function fetchPayments() {
+      const target = document.getElementById("paymentsContainer");
+      target.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/payments`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">Failed to fetch support invoices.</p>`;
+          return;
+        }
+
+        const payments = await res.json();
+        // Filters only payments that are pending landlord collection
+        const pendingPayments = (payments || []).filter(p => p.status === "pending" || p.status === "created");
+
+        if (pendingPayments.length === 0) {
+          target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">No incoming rent payment receipts found.</p>`;
+          return;
+        }
+
+        pendingPayments.forEach((pay) => {
+          const card = document.createElement("div");
+          card.className = "req-card";
+          card.style.width = "100%";
+          card.innerHTML = `
+            <div class="req-user">
+              <i class="fa-solid fa-wallet"></i>
+              <div>
+                <h5>Rent payout from ${pay.tenant_name || 'Resident'}</h5>
+                <span>Paid ₹${parseFloat(pay.amount || 0)?.toLocaleString()} · Ref ID: ${pay.provider_payment_id || 'N/A'}</span>
+              </div>
+            </div>
+            <div class="req-meta" style="margin-bottom:12px;">
+              Target room: <strong>${pay.property_title}</strong>
+            </div>
+            <div class="req-btns">
+              <button class="approve-btn" onclick="actOnPayment('${pay.id}', 'paid')">Verify Collected</button>
+              <button class="reject-btn" onclick="actOnPayment('${pay.id}', 'failed')">Decline</button>
+            </div>
+          `;
+          target.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Fetch payments error:", err);
+        target.innerHTML = `<p style="color:var(--muted);font-weight:600;font-size:15px;text-align:center;padding:34px 0;">Network error occurred.</p>`;
+      }
+    }
+
+    window.actOnLock = async (requestId, decision) => {
+      showToast("Updating lock state...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/lock-requests/${requestId}/action`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: decision })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || "Failed to update stay lock decision");
+          return;
+        }
+
+        showToast(`Lock request ${decision} successfully.`);
+        fetchData();
+      } catch (err) {
+        console.error("Lock action error:", err);
+        showToast("Error processing lock decision.");
+      }
+    };
+
+    window.actOnPayment = async (payId, decision) => {
+      showToast("Verifying payment transcript...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/owner/payments/${payId}/action`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: decision })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || "Failed to confirm rent payment receipt");
+          return;
+        }
+
+        showToast(`Payout status marked ${decision}.`);
+        fetchData();
+      } catch (err) {
+        console.error("Payment confirmation error:", err);
+        showToast("Error confirming payment.");
+      }
+    };
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      if (token) {
+        try {
+          await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+        } catch (_) {}
+      }
+      localStorage.removeItem("gka_token");
+      localStorage.removeItem("gka_auth_token");
+      localStorage.removeItem("gka_user");
+      window.location.href = "login.html";
+    });
+
+    checkAuth();
+  </script>
+</body>
+</html>

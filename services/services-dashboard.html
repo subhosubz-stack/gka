@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Services Dashboard — GharKaAdda</title>
+  <script src="../JS/gka-route-guard.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="../CSS/gka-app.css?v=2">
+  <link rel="stylesheet" href="../CSS/gka-shell.css?v=1">
+  <style>
+    body {
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122,78,45,.16), transparent 30%),
+        linear-gradient(135deg, var(--bg), #fff8ef);
+    }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .dash-card {
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.62);
+    }
+    .dash-card .status {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(122,78,45,.1);
+      color: var(--accent);
+    }
+    .dash-card .actions {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .dash-card .actions a,
+    .dash-card .actions button {
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .empty-box {
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .top-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .top-bar-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      flex: 1;
+      min-width: min(100%, 280px);
+    }
+    .top-bar-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .gka-shell-slot {
+      width: 100%;
+      justify-content: flex-end;
+    }
+    .back-link {
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      font-weight: 800;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-map {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="gka-noise"></div>
+  <main class="gka-page">
+    <div class="top-bar">
+      <a href="../tenant-dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Student hub</a>
+      <div class="top-bar-actions">
+        <div class="gka-shell-slot" data-auto></div>
+        <div class="top-bar-links">
+          <a href="services-onboarding.html" class="back-link"><i class="fa-solid fa-plus"></i> Add services</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="gka-glass" style="padding:36px;margin-top:20px;">
+      <div style="padding:14px 18px;border-radius:14px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);margin-bottom:20px;font-weight:700;color:#92400e;">
+        <i class="fa-solid fa-clock"></i> Services are coming soon. Tiffin and other amenities will be available in a future release.
+      </div>
+      <p class="gka-kicker">Services</p>
+      <h1 class="gka-title">Your helping amenities</h1>
+      <p class="gka-sub">Tiffin, laundry, cleaning, and campus-life support — preview only for now.</p>
+      <div class="dash-grid" id="dashGrid"></div>
+      <div class="empty-box gka-sub" id="emptyState" hidden>
+        <p>No services yet.</p>
+        <a href="services-onboarding.html" class="gka-btn gka-btn-primary" style="margin-top:16px;display:inline-flex;">Set up services</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../config.js?v=2"></script>
+  <script src="../JS/gka-profile-badge.js?v=1"></script>
+  <script src="../JS/gka-notifications.js?v=1"></script>
+  <script src="../JS/gka-shell.js?v=3"></script>
+  <script>
+    const API = window.GKA_CONFIG?.API_BASE_URL || '/api';
+    const token = localStorage.getItem('gka_token') || localStorage.getItem('gka_auth_token');
+
+    const ICONS = {
+      tiffin: 'fa-bowl-food',
+      laundry: 'fa-shirt',
+      room_cleaning: 'fa-broom',
+      deep_clean: 'fa-spray-can-sparkles',
+      wifi_setup: 'fa-wifi',
+      moving: 'fa-truck-ramp-box'
+    };
+
+    function actionFor(key) {
+      if (key === 'tiffin') {
+        return `<a href="../tenant-tiffin.html"><i class="fa-solid fa-utensils"></i> Manage tiffin</a>`;
+      }
+      return `<button type="button" data-key="${key}" class="request-btn"><i class="fa-solid fa-paper-plane"></i> Request callback</button>`;
+    }
+
+    async function load() {
+      const res = await fetch(`${API}/services/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include'
+      });
+      const data = await res.json();
+      const list = data.services || [];
+      const grid = document.getElementById('dashGrid');
+      const empty = document.getElementById('emptyState');
+
+      if (!list.length) {
+        grid.innerHTML = '';
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      grid.innerHTML = list
+        .map((s) => {
+          const icon = ICONS[s.service_key] || 'fa-hand-sparkles';
+          return `
+          <article class="dash-card">
+            <div class="icon-map"><i class="fa-solid ${icon}"></i></div>
+            <h3 style="font-family:Manrope,sans-serif;font-size:20px;color:var(--accent);margin-top:14px;">${s.service_label || s.service_key}</h3>
+            <span class="status">${s.status || 'active'}</span>
+            ${s.provider_name ? `<p class="gka-sub" style="margin-top:8px;">${s.provider_name}${s.plan_name ? ' · ' + s.plan_name : ''}</p>` : ''}
+            <div class="actions">${actionFor(s.service_key)}</div>
+          </article>`;
+        })
+        .join('');
+
+      grid.querySelectorAll('.request-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          await fetch(`${API}/services/${btn.dataset.key}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ notes: 'Callback requested from dashboard' })
+          });
+          btn.textContent = 'Request sent ✓';
+        });
+      });
+    }
+
+    load();
+  </script>
+</body>
+</html>

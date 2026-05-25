@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Support — GharKaAdda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="stylesheet" href="CSS/gka-app.css?v=2" />
+  <link rel="stylesheet" href="CSS/gka-dashboard-nav.css?v=1" />
+  <link rel="stylesheet" href="CSS/gka-shell.css?v=1" />
+  <style>
+    body { min-height: 100vh; background: linear-gradient(135deg, #f7f3ee, #fff8ef); font-family: Inter, sans-serif; color: #1c1713; }
+    .gka-page { max-width: 720px; margin: 0 auto; padding: 32px 20px; }
+    .support-form { display: grid; gap: 12px; margin-top: 20px; }
+    .support-form input, .support-form textarea {
+      padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(122,78,45,.16); font: inherit;
+    }
+    .gka-btn-primary { background: #7a4e2d; color: #fff; border: 0; padding: 14px; border-radius: 999px; font-weight: 800; cursor: pointer; }
+    .support-item { padding: 16px; border-radius: 16px; border: 1px solid rgba(122,78,45,.16); background: rgba(255,255,255,.6); margin-top: 12px; }
+    .gka-sub { color: #77695f; font-size: 14px; }
+    .gka-title { font-family: Manrope, sans-serif; color: #7a4e2d; }
+  </style>
+</head>
+<body>
+  <main class="gka-page">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+      <div class="gka-shell-slot" data-auto></div>
+    </div>
+    <div data-gka-dash-nav></div>
+    <h1 class="gka-title">Support</h1>
+    <p class="gka-sub">Contact the GharKaAdda team. Messages are reviewed in the super admin dashboard.</p>
+    <form class="support-form" id="supportForm">
+      <input type="text" id="supportSubject" required placeholder="Subject" maxlength="120">
+      <textarea id="supportBody" rows="5" required placeholder="Describe your issue or question"></textarea>
+      <button type="submit" class="gka-btn-primary">Send message</button>
+    </form>
+    <div id="supportHistory"></div>
+  </main>
+  <script src="config.js"></script>
+  <script src="JS/gka-profile-badge.js?v=1"></script>
+  <script src="JS/gka-notifications.js?v=1"></script>
+  <script src="JS/gka-shell.js?v=1"></script>
+  <script src="JS/gka-dashboard-nav.js?v=1"></script>
+  <script>
+    const API = window.GKA_CONFIG?.API_BASE_URL || '/api';
+    const token = localStorage.getItem('gka_token');
+    const h = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+    const user = JSON.parse(localStorage.getItem('gka_user') || '{}');
+    const home = { tenant: 'tenant-dashboard.html', owner: 'owner-dashboard.html', broker: 'broker-dashboard.html' }[user.role] || 'index.html';
+
+    async function loadHistory() {
+      const res = await fetch(`${API}/support/me`, { headers: h });
+      const rows = await res.json();
+      const el = document.getElementById('supportHistory');
+      if (!rows.length) {
+        el.innerHTML = '<p class="gka-sub" style="margin-top:24px;">No previous messages.</p>';
+        return;
+      }
+      el.innerHTML = '<h2 style="font-size:18px;margin-top:28px;color:#7a4e2d;">Your messages</h2>' + rows.map((m) => `
+        <div class="support-item">
+          <strong>${m.subject}</strong>
+          <p class="gka-sub" style="margin:8px 0;">${m.body}</p>
+          <small>${new Date(m.created_at).toLocaleString()} · ${m.status}</small>
+          ${m.admin_reply ? `<p style="margin-top:8px;font-weight:700;color:#7a4e2d;">Team reply: ${m.admin_reply}</p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('supportForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const res = await fetch(`${API}/support`, { method: 'POST', headers: h, body: JSON.stringify({ subject: supportSubject.value, body: supportBody.value }) });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || 'Failed'); return; }
+      supportSubject.value = '';
+      supportBody.value = '';
+      loadHistory();
+      alert('Message sent successfully.');
+    };
+
+    loadHistory();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="JS/gka-route-guard.js"></script>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/Nj6b1m6s/logo.png" />
+  <title>Properties Explorer — GharKaAdda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    :root {
+      --bg:#f7f3ee;
+      --paper:#fffaf4;
+      --accent:#7a4e2d;
+      --accent-dark:#3d2516;
+      --text:#1c1713;
+      --muted:#77695f;
+      --line:rgba(122,78,45,.16);
+      --shadow:0 34px 100px rgba(63,39,24,.16);
+      --premium-glow:rgba(212,175,55,.68);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      min-height:100vh;
+      font-family:Inter,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122,78,45,.16), transparent 30%),
+        radial-gradient(circle at 88% 20%, rgba(122,78,45,.12), transparent 28%),
+        linear-gradient(135deg,var(--bg),#fff8ef);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; border:0; cursor:pointer; }
+
+    .noise {
+      position:fixed;
+      inset:0;
+      z-index:20;
+      opacity:.12;
+      pointer-events:none;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      position:relative;
+      z-index:2;
+      width:min(1240px, calc(100% - 42px));
+      min-height:100vh;
+      margin:0 auto;
+      padding:42px 0;
+    }
+
+    .top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:34px;
+    }
+
+    .brand img {
+      width:155px;
+    }
+
+    .back-btn {
+      min-height:46px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(20px);
+      color:var(--accent);
+      font-weight:900;
+      transition:.3s;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .back-btn:hover { transform:translateY(-3px); background:rgba(255,255,255,.8); }
+
+    .filter-bar {
+      margin-bottom:34px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.54);
+      backdrop-filter:blur(20px);
+    }
+
+    .search-inputs {
+      display:grid;
+      grid-template-columns:1.8fr 1fr 1fr;
+      gap:12px;
+      flex-grow:1;
+    }
+
+    .input-grp {
+      position:relative;
+    }
+
+    .input-grp i {
+      position:absolute;
+      left:15px;
+      top:15px;
+      color:var(--muted);
+    }
+
+    .input-grp input, .input-grp select {
+      width:100%;
+      height:48px;
+      padding:0 15px 0 42px;
+      border-radius:14px;
+      border:1px solid rgba(122,78,45,.16);
+      outline:none;
+      background:white;
+      font-size:14px;
+      font-weight:650;
+      color:var(--text);
+    }
+
+    .filter-btns {
+      display:flex;
+      gap:10px;
+    }
+
+    .f-btn {
+      height:48px;
+      padding:0 20px;
+      border-radius:14px;
+      border:2px solid rgba(122,78,45,.2);
+      background:rgba(255,255,255,.85);
+      color:var(--text);
+      font-weight:800;
+      font-size:13.5px;
+      transition:.2s;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:0 2px 0 rgba(122,78,45,.06);
+    }
+
+    .f-btn:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+    }
+
+    .f-btn.active {
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent-dark);
+      box-shadow:0 8px 24px rgba(122,78,45,.28), inset 0 0 0 1px rgba(255,255,255,.15);
+    }
+
+    .f-btn.active::before {
+      content:"\f00c";
+      font-family:"Font Awesome 6 Free";
+      font-weight:900;
+      font-size:11px;
+    }
+
+    .input-grp.is-active select,
+    .input-grp.is-active input {
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(122,78,45,.12);
+    }
+
+    .filter-status {
+      width:100%;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+      margin-top:4px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+    }
+
+    .filter-status .count {
+      font-size:13px;
+      font-weight:800;
+      color:var(--accent);
+    }
+
+    .filter-status .chips {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      flex:1;
+    }
+
+    .filter-chip-tag {
+      padding:6px 12px;
+      border-radius:999px;
+      background:rgba(122,78,45,.1);
+      border:1px solid rgba(122,78,45,.2);
+      font-size:11px;
+      font-weight:800;
+      color:var(--accent);
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .filter-clear {
+      min-height:36px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid rgba(217,48,37,.25);
+      background:rgba(217,48,37,.06);
+      color:var(--danger, #d93025);
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .gka-filter-chip.is-on {
+      background:var(--accent) !important;
+      color:#fff !important;
+      border-color:var(--accent) !important;
+      box-shadow:0 4px 14px rgba(122,78,45,.22);
+    }
+
+    .p-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:24px;
+    }
+
+    .p-card {
+      border:1px solid var(--line);
+      border-radius:30px;
+      background:rgba(255,255,255,.68);
+      backdrop-filter:blur(24px);
+      box-shadow:0 18px 50px rgba(63,39,24,.06);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      transition:transform .35s, box-shadow .35s;
+    }
+
+    .p-card:hover {
+      transform:translateY(-10px);
+      box-shadow:0 28px 80px rgba(63,39,24,.13);
+    }
+
+    .p-card.premium {
+      border-color:rgba(212,175,55,.45);
+      background:radial-gradient(ellipse at bottom left, rgba(212,175,55,.05), transparent), rgba(255,255,255,.75);
+    }
+
+    .p-img, .p-img-wrap .gka-media-wrap {
+      position:relative;
+      height:210px;
+      background-size:cover;
+      background-position:center;
+      background-color:rgba(122,78,45,.08);
+    }
+
+    .p-img-wrap .p-badge,
+    .p-img-wrap .p-price {
+      z-index:5;
+      pointer-events:none;
+    }
+
+    .p-img-wrap .gka-photo-strip {
+      z-index:6;
+    }
+
+    .p-badge {
+      position:absolute;
+      left:18px;
+      top:18px;
+      padding:6px 12px;
+      border-radius:99px;
+      font-size:11.5px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .p-badge.std { background:rgba(122,78,45,.12); color:var(--accent-dark); border:1px solid rgba(122,78,45,.2); }
+    .p-badge.pre { background:linear-gradient(135deg,#d4af37,#aa7c11); color:white; box-shadow:0 8px 24px rgba(170,124,17,.3); }
+
+    .p-price {
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      padding:6px 12px;
+      border-radius:12px;
+      background:rgba(0,0,0,.68);
+      backdrop-filter:blur(8px);
+      color:white;
+      font-weight:900;
+      font-size:14.5px;
+    }
+
+    .p-body {
+      padding:24px;
+      flex-grow:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .p-body h3 {
+      font-family:Manrope,sans-serif;
+      font-size:22px;
+      font-weight:800;
+      line-height:1.1;
+      letter-spacing:-.04em;
+    }
+
+    .p-body h3 i {
+      font-size:14px;
+      color:rgba(212,175,55,1);
+      margin-left:4px;
+    }
+
+    .p-body p {
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.55;
+      margin-top:10px;
+      font-weight:650;
+      margin-bottom:14px;
+    }
+
+    .p-meta {
+      display:flex;
+      gap:14px;
+      font-size:12.5px;
+      color:var(--muted);
+      font-weight:800;
+      margin-bottom:18px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:14px;
+    }
+
+    .p-meta span i { margin-right:5px; color:var(--accent); }
+
+    .p-actions {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .p-actions button {
+      height:44px;
+      border-radius:12px;
+      font-weight:900;
+      font-size:12.5px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      transition:.2s;
+    }
+
+    .unlock-btn { background:var(--accent); color:white; box-shadow:0 8px 22px rgba(122,78,45,.18); }
+    .unlock-btn:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(122,78,45,.28); }
+
+    .lock-btn { border:1px solid var(--line); background:white; color:var(--accent-dark); }
+    .lock-btn:hover { background:rgba(122,78,45,.06); transform:translateY(-2px); }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      z-index:900;
+      display:none;
+      place-items:center;
+      background:rgba(61,37,22,.48);
+      backdrop-filter:blur(20px);
+    }
+
+    .modal.show { display:grid; }
+
+    .modal-card {
+      width:min(450px, calc(100% - 30px));
+      background:white;
+      border-radius:28px;
+      padding:28px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      text-align:center;
+    }
+
+    .modal-card i.main-icon {
+      width:72px;
+      height:72px;
+      display:grid;
+      place-items:center;
+      margin:0 auto 18px;
+      border-radius:50%;
+      background:rgba(122,78,45,.1);
+      color:var(--accent);
+      font-size:28px;
+    }
+
+    .modal-card h3 { font-family:Manrope,sans-serif; font-size:24px; font-weight:800; }
+    .modal-card p { font-size:14px; color:var(--muted); line-height:1.5; margin-top:8px; font-weight:650; }
+
+    .modal-inputs {
+      margin-top:22px;
+      text-align:left;
+    }
+
+    .modal-inputs label {
+      display:block;
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .modal-inputs input {
+      width:100%;
+      height:46px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(122,78,45,.2);
+      outline:none;
+      font-weight:750;
+      color:var(--text);
+    }
+
+    .modal-inputs input:focus {
+      border-color:var(--accent);
+    }
+
+    .modal-btns {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:24px;
+    }
+
+    .modal-btn {
+      height:48px;
+      border-radius:14px;
+      font-weight:950;
+      font-size:13.5px;
+    }
+
+    .modal-btn.primary { background:var(--accent); color:white; }
+    .modal-btn.secondary { border:1px solid var(--line); background:#fff; color:var(--text); }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      z-index:990;
+      padding:14px 18px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(18px);
+      color:var(--accent);
+      font-weight:900;
+      box-shadow:0 18px 60px rgba(63,39,24,.15);
+      transform:translate(-50%, 80px);
+      opacity:0;
+      transition:.35s;
+    }
+
+    .toast.show {
+      transform:translate(-50%,0);
+      opacity:1;
+    }
+
+    @media (max-width:1000px) {
+      .p-grid { grid-template-columns:repeat(2,1fr); }
+    }
+
+    @media (max-width:680px) {
+      .search-inputs { grid-template-columns:1fr; }
+      .p-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <main class="page">
+    <div class="top">
+      <a href="index.html" class="brand">
+        <img src="https://i.postimg.cc/pV527RJK/logo.png" alt="GharKaAdda">
+      </a>
+
+      <div class="gka-shell-slot" data-auto></div>
+    </div>
+
+    <nav data-gka-dash-nav></nav>
+
+    <!-- Search/Filter Area -->
+    <div class="filter-bar">
+      <div class="search-inputs">
+        <div class="input-grp">
+          <i class="fa-solid fa-house"></i>
+          <input type="text" id="searchInput" placeholder="Search by housing locality (e.g. Rohini)...">
+        </div>
+
+        <div class="input-grp">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+          <select id="budgetFilter">
+            <option value="any">Any Budget</option>
+            <option value="10000">Below ₹10,000</option>
+            <option value="15000">Below ₹15,000</option>
+            <option value="20000">Below ₹20,000</option>
+          </select>
+        </div>
+
+        <div class="input-grp">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <select id="collegeFilter">
+            <option value="">All colleges (sorted)</option>
+            <option>CGC UNIVERSITY MOHALI</option>
+            <option>CHANDIGARH UNIVERSITY</option>
+            <option>CGC LANDRAN</option>
+            <option>QUEST GROUP OF COLLEGES</option>
+            <option>CHITKARA UNIVERSITY</option>
+          </select>
+        </div>
+
+        <div class="input-grp">
+          <i class="fa-solid fa-bed"></i>
+          <select id="typeFilter">
+            <option value="any">Any Room Type</option>
+            <option value="1BHK">1 BHK Flat</option>
+            <option value="2BHK">2 BHK Flat</option>
+            <option value="Single Room">Single Room</option>
+            <option value="Shared Pg">Shared PG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-btns">
+        <button class="f-btn active" data-filter="all">All listings</button>
+        <button class="f-btn" data-filter="premium">Premium only <i class="fa-solid fa-star"></i></button>
+        <button class="f-btn" data-filter="wishlist" id="wishlistFilterBtn"><i class="fa-solid fa-heart"></i> My wishlist</button>
+      </div>
+      <div id="amenityFilterBar"></div>
+      <div class="filter-status" id="filterStatusBar">
+        <span class="count" id="filterCountLabel">Loading listings…</span>
+        <div class="chips" id="filterActiveChips"></div>
+        <button type="button" class="filter-clear" id="clearFiltersBtn" hidden>Clear all filters</button>
+      </div>
+    </div>
+
+    <!-- Properties Stream Grid -->
+    <div class="p-grid" id="propertiesContainer">
+      <!-- Injected from Database -->
+    </div>
+  </main>
+
+  <!-- Unlock Contact Modal -->
+  <div class="modal" id="unlockModal">
+    <div class="modal-card">
+      <i class="fa-solid fa-lock-open main-icon"></i>
+      <h3>Unlock Contact details</h3>
+      <p>Contacts released on security unlocks are valid for a strict 30-day window. Do you wish to proceed?</p>
+
+      <div class="modal-inputs" style="display:none;"></div>
+
+      <div class="modal-btns">
+        <button class="modal-btn secondary" id="closeUnlockModal">Dismiss</button>
+        <button class="modal-btn primary" id="confirmUnlockBtn">Unlock now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lock Property Modal -->
+  <div class="modal" id="lockModal">
+    <div class="modal-card">
+      <i class="fa-solid fa-handshake main-icon"></i>
+      <h3>Request Property Lock</h3>
+      <p>Submit a rental block request. The landlord will evaluate your profile and confirm details.</p>
+
+      <div class="modal-inputs">
+        <label for="offeredRent">Your offered monthly rent (₹)</label>
+        <input type="number" id="offeredRent" placeholder="Enter rent offer amount">
+      </div>
+
+      <div class="modal-btns">
+        <button class="modal-btn secondary" id="closeLockModal">Cancel</button>
+        <button class="modal-btn primary" id="confirmLockBtn">Lock property</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Connecting secure stream...</div>
+
+  <link rel="stylesheet" href="CSS/gka-app.css?v=2">
+  <link rel="stylesheet" href="CSS/gka-dashboard-nav.css?v=1">
+  <link rel="stylesheet" href="CSS/gka-price-display.css?v=1">
+  <link rel="stylesheet" href="CSS/gka-listing-qr.css?v=1">
+  <link rel="stylesheet" href="CSS/gka-shell.css?v=2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="config.js?v=2"></script>
+  <script src="JS/gka-notifications.js?v=1"></script>
+  <script src="JS/gka-shell.js?v=2"></script>
+  <script src="JS/gka-amenities.js?v=1"></script>
+  <script src="JS/gka-listing-media.js?v=4"></script>
+  <script src="JS/gka-price-display.js?v=1"></script>
+  <script src="JS/gka-dashboard-nav.js?v=1"></script>
+  <script src="JS/gka-listing-qr.js?v=1"></script>
+  <script src="JS/gka-property-view.js?v=2"></script>
+  <script src="JS/gka-chat.js?v=7"></script>
+  <script src="JS/gka-payments.js?v=1"></script>
+  <script>
+    const API_BASE_URL = window.GKA_CONFIG?.API_BASE_URL || "/api";
+    const toast = document.getElementById("toast");
+    let currentUser = null;
+    let token = null;
+    let localProperties = [];
+    let wishlistIds = new Set();
+    let currentSelectedPropertyId = null;
+    let activeAmenityFilters = [];
+    let activeQuickFilter = "all";
+    const amenityBarEl = () => document.getElementById("amenityFilterBar");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    async function checkAuth() {
+      token = localStorage.getItem("gka_token") || localStorage.getItem("gka_auth_token");
+      const userStr = localStorage.getItem("gka_user");
+      
+      if (!token || !userStr) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        currentUser = JSON.parse(userStr);
+      } catch (_) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      loadWishlist();
+      fetchProperties();
+      const openId = new URLSearchParams(location.search).get('property') || new URLSearchParams(location.search).get('open');
+      if (openId) setTimeout(() => viewProperty(openId), 400);
+      refreshAmenityBar();
+      document.getElementById("clearFiltersBtn").onclick = clearAllFilters;
+    }
+
+    function refreshAmenityBar() {
+      if (!window.GKAAmenities) return;
+      GKAAmenities.renderFilterBar(amenityBarEl(), activeAmenityFilters, (next) => {
+        activeAmenityFilters = next;
+        refreshAmenityBar();
+        filterListings();
+      });
+    }
+
+    function norm(s) {
+      return String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function markInputActive(id, isActive) {
+      const el = document.getElementById(id)?.closest(".input-grp");
+      if (el) el.classList.toggle("is-active", isActive);
+    }
+
+    function updateFilterStatusUI(total, shown) {
+      const countEl = document.getElementById("filterCountLabel");
+      const chipsEl = document.getElementById("filterActiveChips");
+      const clearBtn = document.getElementById("clearFiltersBtn");
+      countEl.textContent =
+        shown === total
+          ? `Showing all ${total} listing${total === 1 ? "" : "s"}`
+          : `Showing ${shown} of ${total} listing${total === 1 ? "" : "s"}`;
+
+      const chips = [];
+      const search = document.getElementById("searchInput").value.trim();
+      const budget = document.getElementById("budgetFilter").value;
+      const type = document.getElementById("typeFilter").value;
+      const college = document.getElementById("collegeFilter").value;
+      if (search) chips.push(`Search: ${search}`);
+      if (budget !== "any") chips.push(`Budget ≤ ₹${parseInt(budget, 10).toLocaleString()}`);
+      if (type !== "any") chips.push(`Type: ${type}`);
+      if (college) chips.push(`College: ${college}`);
+      if (activeQuickFilter === "premium") chips.push("Premium only");
+      if (activeQuickFilter === "wishlist") chips.push("Wishlist");
+      activeAmenityFilters.forEach((a) => chips.push(a));
+
+      chipsEl.innerHTML = chips.length
+        ? chips.map((c) => `<span class="filter-chip-tag"><i class="fa-solid fa-filter"></i> ${c}</span>`).join("")
+        : `<span class="filter-chip-tag" style="opacity:.7;">No filters applied</span>`;
+
+      const hasFilters =
+        search ||
+        budget !== "any" ||
+        type !== "any" ||
+        college ||
+        activeQuickFilter !== "all" ||
+        activeAmenityFilters.length > 0;
+      clearBtn.hidden = !hasFilters;
+    }
+
+    function clearAllFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("budgetFilter").value = "any";
+      document.getElementById("typeFilter").value = "any";
+      activeAmenityFilters = [];
+      activeQuickFilter = "all";
+      document.querySelectorAll(".f-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.filter === "all");
+        b.setAttribute("aria-pressed", b.dataset.filter === "all" ? "true" : "false");
+      });
+      markInputActive("searchInput", false);
+      markInputActive("budgetFilter", false);
+      markInputActive("typeFilter", false);
+      refreshAmenityBar();
+      filterListings();
+    }
+
+    async function loadWishlist() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/favorites`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        wishlistIds = new Set((rows || []).map((p) => p.id));
+      } catch (_) {}
+    }
+
+    async function toggleWishlist(propertyId, btn) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/properties/${propertyId}/favorite`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        if (data.favorited) wishlistIds.add(propertyId);
+        else wishlistIds.delete(propertyId);
+        if (btn) btn.classList.toggle("is-on", data.favorited);
+        showToast(data.message || (data.favorited ? "Saved to wishlist" : "Removed"));
+        filterListings();
+      } catch (e) {
+        showToast(e.message || "Wishlist update failed");
+      }
+    }
+
+    async function fetchProperties() {
+      showToast("Loading verified listings...");
+
+      try {
+        const college = document.getElementById("collegeFilter")?.value || "";
+        const qs = college ? `?nearest_college=${encodeURIComponent(college)}` : "";
+        const res = await fetch(`${API_BASE_URL}/properties${qs}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          showToast("Failed to retrieve listings.");
+          return;
+        }
+
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.properties || []);
+        localProperties = (rows || []).map(p => ({
+          ...p,
+          rent: parseFloat(p.monthly_rent || 0),
+          is_premium: p.listing_type === 'premium',
+          photo_url: p.media && p.media.length > 0 ? p.media[0].file_url : null
+        }));
+
+        filterListings();
+        showToast(`Loaded ${localProperties.length} listings`);
+      } catch (err) {
+        console.error("Fetch properties error:", err);
+        showToast("Error loading properties.");
+      }
+    }
+
+    function renderProperties(props) {
+      const container = document.getElementById("propertiesContainer");
+      container.innerHTML = "";
+
+      if (props.length === 0) {
+        container.innerHTML = `<p style="grid-column: span 3; text-align: center; color: var(--muted); font-size: 16px; font-weight: 650; padding: 42px 0;">No active properties match your query filters.</p>`;
+        return;
+      }
+
+      props.forEach((p) => {
+        const isPremium = p.is_premium;
+        const mediaHero = window.GKAListingMedia
+          ? GKAListingMedia.cardHeroHtml(p)
+          : `<div class="p-img" style="background-image:url('https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600')"></div>`;
+
+        const card = document.createElement("div");
+        card.className = `p-card ${isPremium ? 'premium' : ''}`;
+        card.innerHTML = `
+          <div class="p-img-wrap" style="position:relative;">
+            ${mediaHero}
+            <span class="p-badge ${isPremium ? 'pre' : 'std'}">${isPremium ? 'Premium' : 'Standard'}</span>
+            <span class="p-price">${
+              window.GKAPriceDisplay
+                ? GKAPriceDisplay.formatPriceHtml(p, { compact: true })
+                : `₹${p.rent?.toLocaleString()}/mo`
+            }</span>
+          </div>
+          <div class="p-body">
+            <div>
+              <h3>${p.title} ${isPremium ? '<i class="fa-solid fa-circle-check"></i>' : ''}</h3>
+              <p>${p.description || 'Verified student studio housing unit close to regional bus loops and commercial outlets.'}</p>
+              <div class="p-meta">
+                <span><i class="fa-solid fa-map-pin"></i>${p.city || '—'}</span>
+                <span><i class="fa-solid fa-graduation-cap"></i>${p.nearest_college || 'College TBA'}</span>
+                <span><i class="fa-solid fa-bed"></i>${p.property_type || 'Room'}</span>
+              </div>
+            </div>
+            <div class="p-actions">
+              <button class="unlock-btn wishlist-btn ${wishlistIds.has(p.id) ? 'is-on' : ''}" type="button" data-wish="${p.id}" style="grid-column:span 2;">
+                <i class="fa-solid fa-heart"></i> ${wishlistIds.has(p.id) ? 'In wishlist' : 'Add to wishlist'}
+              </button>
+              <button class="unlock-btn" style="background:var(--accent-dark);" onclick="viewProperty('${p.id}')">
+                <i class="fa-solid fa-eye"></i> View details
+              </button>
+              <button class="unlock-btn" onclick="openUnlockModal('${p.id}')">
+                <i class="fa-solid fa-unlock"></i> Unlock Contacts
+              </button>
+              <button class="lock-btn" onclick="openLockModal('${p.id}', ${p.rent})">
+                <i class="fa-solid fa-handshake"></i> Offer Lock
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+        if (window.GKAListingMedia) {
+          GKAListingMedia.bindThumbClicks(card);
+        }
+        const wBtn = card.querySelector("[data-wish]");
+        if (wBtn) wBtn.onclick = (e) => { e.stopPropagation(); toggleWishlist(p.id, wBtn); };
+      });
+    }
+
+    // Filters
+    document.getElementById("searchInput").addEventListener("input", filterListings);
+    document.getElementById("budgetFilter").addEventListener("change", filterListings);
+    document.getElementById("typeFilter").addEventListener("change", filterListings);
+    document.getElementById("collegeFilter").addEventListener("change", fetchProperties);
+
+    document.querySelectorAll(".f-btn").forEach((btn) => {
+      btn.setAttribute("aria-pressed", btn.classList.contains("active") ? "true" : "false");
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.filter;
+        if (activeQuickFilter === key && key !== "all") {
+          activeQuickFilter = "all";
+          document.querySelectorAll(".f-btn").forEach((b) => {
+            const on = b.dataset.filter === "all";
+            b.classList.toggle("active", on);
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+        } else {
+          activeQuickFilter = key;
+          document.querySelectorAll(".f-btn").forEach((b) => {
+            const on = b.dataset.filter === key;
+            b.classList.toggle("active", on);
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+        }
+        filterListings();
+      });
+    });
+
+    function filterListings() {
+      const search = norm(document.getElementById("searchInput").value);
+      const budgetVal = document.getElementById("budgetFilter").value;
+      const typeVal = document.getElementById("typeFilter").value;
+      const typeNorm = norm(typeVal);
+
+      markInputActive("searchInput", !!search);
+      markInputActive("budgetFilter", budgetVal !== "any");
+      markInputActive("typeFilter", typeVal !== "any");
+
+      let filtered = [...localProperties];
+
+      if (search) {
+        filtered = filtered.filter((p) => {
+          const hay = norm(
+            [p.title, p.city, p.locality, p.description, p.nearest_college, p.property_type].join(" ")
+          );
+          return hay.includes(search);
+        });
+      }
+
+      if (budgetVal !== "any") {
+        const cost = parseInt(budgetVal, 10);
+        filtered = filtered.filter((p) => p.rent <= cost);
+      }
+
+      if (typeVal !== "any") {
+        filtered = filtered.filter((p) => {
+          const pt = norm(p.property_type);
+          return pt === typeNorm || pt.includes(typeNorm) || typeNorm.includes(pt);
+        });
+      }
+
+      if (activeQuickFilter === "premium") {
+        filtered = filtered.filter((p) => p.is_premium === true);
+      }
+
+      if (activeQuickFilter === "wishlist") {
+        filtered = filtered.filter((p) => wishlistIds.has(p.id));
+      }
+
+      if (activeAmenityFilters.length) {
+        filtered = filtered.filter((p) => {
+          let am = p.amenities;
+          if (typeof am === "string") {
+            try { am = JSON.parse(am); } catch { am = []; }
+          }
+          const normalized = window.GKAAmenities
+            ? GKAAmenities.normalizeList(am || [])
+            : am || [];
+          return activeAmenityFilters.every((f) =>
+            normalized.some((x) => norm(x) === norm(f) || norm(x).includes(norm(f)))
+          );
+        });
+      }
+
+      updateFilterStatusUI(localProperties.length, filtered.length);
+      renderProperties(filtered);
+    }
+
+    window.viewProperty = async (propertyId) => {
+      try {
+        await GKAPropertyView.open(propertyId, API_BASE_URL, token, {
+          onUnlock: (prop) => {
+            GKAPropertyView.close();
+            openUnlockModal(prop.id);
+          },
+          onLock: (prop) => {
+            GKAPropertyView.close();
+            openLockModal(prop.id, parseFloat(prop.monthly_rent || 0));
+          },
+          onChat: (prop) => openPropertyChatInListing(prop.id)
+        });
+      } catch (e) {
+        showToast(e.message || "Could not open property");
+      }
+    };
+
+    // Modal Operations
+    function openUnlockModal(propertyId) {
+      currentSelectedPropertyId = propertyId;
+      document.getElementById("unlockModal").classList.add("show");
+    }
+
+    function openLockModal(propertyId, rent) {
+      currentSelectedPropertyId = propertyId;
+      document.getElementById("offeredRent").value = rent;
+      document.getElementById("lockModal").classList.add("show");
+    }
+
+    document.getElementById("closeUnlockModal").onclick = () => document.getElementById("unlockModal").classList.remove("show");
+    document.getElementById("closeLockModal").onclick = () => document.getElementById("lockModal").classList.remove("show");
+
+    async function revealUnlockedContact(propertyId) {
+      const property = localProperties.find((p) => p.id === propertyId);
+      if (!property) return;
+
+      const res = await fetch(`${API_BASE_URL}/tenant/unlock-contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ property_id: propertyId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to unlock contact");
+
+      const ownerName = data.property?.owner_name || "Owner";
+      const ownerPhone = data.property?.owner_phone || "N/A";
+      const ownerEmail = data.property?.owner_email || "N/A";
+      alert(
+        `Contact unlocked\n\nProperty: ${property.title}\nName: ${ownerName}\nPhone: ${ownerPhone}\nEmail: ${ownerEmail}\n\nValid for 30 days. Use in-app chat for preset messages until your stay is confirmed.`
+      );
+    }
+
+    document.getElementById("confirmUnlockBtn").onclick = async () => {
+      document.getElementById("unlockModal").classList.remove("show");
+      showToast("Processing contact unlock...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/unlock-contact`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ property_id: currentSelectedPropertyId })
+        });
+
+        if (res.status === 402) {
+          const payInfo = await res.json();
+          showToast(`Pay ₹${payInfo.amountInr || ""} via Razorpay to unlock contact`);
+          await window.GKAPayments.pay({
+            purpose: "contact_unlock",
+            property_id: currentSelectedPropertyId,
+            user: currentUser,
+            onSuccess: async () => {
+              showToast("Payment verified. Revealing contact...");
+              await revealUnlockedContact(currentSelectedPropertyId);
+            },
+            onError: (msg) => showToast(msg || "Payment cancelled")
+          });
+          return;
+        }
+
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || "Failed to unlock contact");
+          return;
+        }
+        await revealUnlockedContact(currentSelectedPropertyId);
+      } catch (err) {
+        console.error("Unlock contact error:", err);
+        showToast(err.message || "Error processing unlock request.");
+      }
+    };
+
+    document.getElementById("confirmLockBtn").onclick = async () => {
+      const rent = parseInt(document.getElementById("offeredRent").value, 10);
+      if (!rent) return;
+
+      document.getElementById("lockModal").classList.remove("show");
+      showToast("Sending lock request to owner...");
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/tenant/lock-request`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            property_id: currentSelectedPropertyId,
+            note: `Offered rent: ₹${rent}/month`
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.error || "Failed to send lock request");
+          return;
+        }
+        showToast("Lock request sent. After owner accepts, pay binding in Resident Dashboard.");
+        setTimeout(() => {
+          if (confirm("Open Resident Dashboard to track status?")) {
+            window.location.href = "tenant-resident-dashboard.html";
+          }
+        }, 400);
+      } catch (err) {
+        console.error("Lock property error:", err);
+        showToast("Error sending lock request.");
+      }
+    };
+
+    window.openPropertyChatInListing = (propertyId) => {
+      if (!token || !currentUser) {
+        showToast("Please log in first.");
+        return;
+      }
+      if (window.GKAChat?.openListingChat) {
+        GKAChat.openListingChat(propertyId, { role: 'tenant' });
+      } else {
+        location.href = `tenant-chats.html?property=${encodeURIComponent(propertyId)}`;
+      }
+    };
+
+    checkAuth();
+  </script>
+</body>
+</html>

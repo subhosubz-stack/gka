@@ -1,0 +1,14 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+uploads/
+
+# Secrets — never commit
+credentials.json
+firebase-applet-config.json
+metadata.json
