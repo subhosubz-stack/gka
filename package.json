@@ -11,7 +11,7 @@
     "db:sync": "node scripts/db-sync.js",
     "seed:admins": "node scripts/seed-admins.js",
     "db:reset": "node scripts/setup-database.js && node scripts/db-sync.js",
-    "build": "node setup.js && vite build",
+    "build": "node setup.js && vite build && node scripts/vercel-postbuild.js",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"

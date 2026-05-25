@@ -23,14 +23,27 @@ Vercel sets `VERCEL=1` automatically.
 ## Deploy steps
 
 1. Push code to GitHub  
-2. Import project in Vercel  
+2. Import project in Vercel → **subhosubz-stack/gka**  
 3. **Framework preset:** Other  
-4. **Build command:** `npm run build`  
-5. **Install command:** `npm install`  
-6. Add environment variables  
+4. **Build command:** `npm run build` (auto from `vercel.json`)  
+5. **Output directory:** `dist` (auto from `vercel.json`)  
+6. Add **all** environment variables below (Production + Preview)  
 7. Deploy  
+8. Set `FRONTEND_ORIGIN` to your exact Vercel URL, then **Redeploy**
 
-All routes are handled by `api/index.js` (Express). `vercel.json` rewrites traffic to the API.
+**How it works:** HTML/JS/CSS are served from `dist/`. Only `/api/*` hits the Express serverless function (`api/index.js`).
+
+## Troubleshooting
+
+| Symptom | Fix |
+|--------|-----|
+| “Cannot reach the API” on login | Add `DATABASE_URL` + `JWT_SECRET` in Vercel env, redeploy |
+| Google Sign-In missing | Add `GOOGLE_CLIENT_ID`; add `https://YOUR-APP.vercel.app` in Google Console origins |
+| Login works but data empty | Run `npm run db:sync` locally once (same `DATABASE_URL`) |
+| 404 on pages | Ensure latest deploy uses `outputDirectory: dist` in `vercel.json` |
+| Build failed | Check Vercel build logs; run `npm run build` locally |
+
+**Do not use Netlify** for this repo without a separate Node API — use Vercel.
 
 ## Local development
 

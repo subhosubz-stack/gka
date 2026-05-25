@@ -9,15 +9,28 @@ import { NEARBY_COLLEGES, DEFAULT_PLATFORM_BRANDING } from '../constants/platfor
 const router = express.Router();
 
 router.get('/public', async (req, res) => {
+  const base = {
+    razorpayKeyId: getPublicKeyId(),
+    razorpayConfigured: isRazorpayConfigured(),
+    googleClientId: process.env.GOOGLE_CLIENT_ID || null,
+    googleEnabled: isGoogleAuthConfigured(),
+    verificationDevMode: isDevVerificationMode(),
+    colleges: NEARBY_COLLEGES,
+    branding: { ...DEFAULT_PLATFORM_BRANDING },
+    settings: {
+      contactUnlockStandardInr: 29,
+      contactUnlockPremiumInr: 49,
+      contactUnlockDays: 30,
+      lockHideDays: 7,
+      visibilityBoostInr: 99,
+      roommateUnlockInr: 29
+    }
+  };
+
   try {
     const settings = await getAllSettings();
     return res.json({
-      razorpayKeyId: getPublicKeyId(),
-      razorpayConfigured: isRazorpayConfigured(),
-      googleClientId: process.env.GOOGLE_CLIENT_ID || null,
-      googleEnabled: isGoogleAuthConfigured(),
-      verificationDevMode: isDevVerificationMode(),
-      colleges: NEARBY_COLLEGES,
+      ...base,
       branding: {
         logo_url: settings.logo_url || DEFAULT_PLATFORM_BRANDING.logo_url,
         favicon_url: settings.favicon_url || DEFAULT_PLATFORM_BRANDING.favicon_url,
@@ -36,7 +49,12 @@ router.get('/public', async (req, res) => {
       }
     });
   } catch (err) {
-    return res.status(500).json({ error: 'Failed to load config.' });
+    console.warn('[GKA] config/public DB settings fallback:', err.message);
+    return res.json({
+      ...base,
+      settingsPartial: true,
+      dbWarning: 'Platform settings unavailable; using defaults.'
+    });
   }
 });
 
