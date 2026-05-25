@@ -137,9 +137,11 @@ window.GKAAuth = (function () {
       })
       .catch((err) => {
         const api = API();
+        const here = window.location.href;
+        const devPort = window.GKA_CONFIG?.DEV_API_PORT || '3000';
         showGoogleSlotMessage(
           el,
-          `Cannot reach the API (${api}). Run npm run dev and open http://127.0.0.1:3000/login.html — not Live Server on another port.`
+          `Cannot reach the API (${api}). Start the server (node server.js), then open http://127.0.0.1:${devPort}/login.html — not Live Server. You are on: ${here}`
         );
         console.warn('[GKA] Google Sign-In config:', err.message);
       });
